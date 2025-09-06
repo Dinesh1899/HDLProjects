@@ -48,17 +48,17 @@ module cpu_tb ();
     initial begin
 	// Uncomment below to dump out VCD file for gtkwave
 	// NOTE: This will NOT work on the jupyter terminal
-	// $dumpfile("cpu_tb.vcd");
-	// $dumpvars(0, "cpu_tb");
+        $dumpfile("cpu_tb.vcd");
+        $dumpvars(0, "cpu_tb");
         $display("RUNNING TEST FROM ", `TESTDIR);
         clk = 1;
         reset = 1;   // This is active high reset
         #100         // At least 100 because Xilinx assumes 100ns reset in post-syn sim
         reset = 0;   // Reset removed - normal functioning resumes
         log_file = $fopen("cpu_tb.log", "a");
-        exp_file = $fopen({`TESTDIR,"/expout.txt"}, "r");
+        exp_file = $fopen({`TESTDIR,"/exp_reg_out.mem"}, "r");
         @(posedge clk);
-        for (i=0; i<1000; i=i+1) begin
+        for (i=0; i<15; i=i+1) begin
             @(posedge clk);
         end
         
@@ -66,11 +66,14 @@ module cpu_tb ();
         // Dump top dmem
         for (i=0; i<32; i=i+1) begin
             s = $fscanf(exp_file, "%d\n", exp_reg);
-            dtmp = {u3.mem3[i], u3.mem2[i], u3.mem1[i], u3.mem0[i]};
+            dtmp = u1.ureg.RF[i];
             if(exp_reg !== dtmp) begin
                 $display("FAIL: Expected Reg[%d] = %x vs. Got Reg[%d] = %x", i, $signed(exp_reg), i, dtmp);
                 fail = fail + 1;
-            end 
+            end
+            else begin 
+                $display("PASSED: Expected Reg[%d] = %x vs. Got Reg[%d] = %x", i, $signed(exp_reg), i, dtmp);
+            end
         end
 
         if(fail != 0) begin

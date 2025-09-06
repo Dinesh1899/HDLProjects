@@ -10,7 +10,7 @@ module regfile(
 	 output [31:0] x31
     );
 
-reg [31:0] RF[31:0];
+reg [31:0] RF[0:31];
 
 integer i;
 
@@ -22,7 +22,7 @@ integer j;
 // end
 
 
-initial begin $readmemh({`TESTDIR, "init_regfile.mem"}, m); end
+initial begin $readmemh({`TESTDIR, "init_regfile.mem"}, RF); end
 
 assign rv1 = (rs1 !=0) ? RF[rs1] : 0;
 assign rv2 = (rs2 !=0) ? RF[rs2] : 0;

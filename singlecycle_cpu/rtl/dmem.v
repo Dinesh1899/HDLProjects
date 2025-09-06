@@ -6,7 +6,7 @@ module dmem(
     output [31:0] drdata
 );
     reg [7:0] m[0:127];
-    initial $readmemh("dmem_ini.mem",m);
+    initial $readmemh({`TESTDIR, "/init_dmem.mem"},m);
 
     wire [31:0] add0,add1,add2,add3;
 	 

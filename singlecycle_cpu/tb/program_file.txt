@@ -1,7 +1,7 @@
-alu.v
-regfile.v
-decoder.v
-cpu.v
-cpu_rtype_tb.v
-dmem.v
-imem.v
+../rtl/alu.v
+../rtl/regfile.v
+../rtl/decoder.v
+../rtl/dmem.v
+../rtl/imem.v
+../rtl/cpu.v
+../tb/cpu_rtype_tb.v

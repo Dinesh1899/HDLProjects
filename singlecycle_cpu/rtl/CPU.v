@@ -3,24 +3,24 @@ module cpu(
     input reset,
     input [31:0] idata,
     input [31:0] drdata,
-    output reg [31:0] iaddr,
-    output reg [31:0] wrdata,
-    output reg [3:0] dwe
+    output [31:0] iaddr,
+    output [31:0] wrdata,
+    output [3:0] dwe
 );
 
     reg [31:0] PC;
 
     always @(posedge clk) begin
-        if(reset) PC <= '0;
-        else PC <= PC + 4;
+        if(reset) PC <= 32'd0;
+        else PC <= PC + 32'd4;
     end
 
     assign iaddr = PC;
-    assign wrdata = '0;
-    assign dwe = '0;
+    assign wrdata = 32'd0;
+    assign dwe = 32'd0;
 
-    reg [3:0] aluOp;
-    reg [4:0] rs1, rs2, rd;
+    wire [3:0] aluOp;
+    wire [4:0] rs1, rs2, rd;
 
     decoder udec(
         .instr(idata),
@@ -30,7 +30,7 @@ module cpu(
         .aluOp(aluOp)
     );
 
-    reg [31:0] rv1, rv2, alu_out, r31;
+    wire [31:0] rv1, rv2, alu_out, r31;
 
     regfile ureg(
         .clk(clk),
@@ -44,7 +44,7 @@ module cpu(
         .x31(r31)
     );
 
-    reg alu_zero;
+    wire alu_zero;
 
     alu u_alu(
         .in1(rv1),

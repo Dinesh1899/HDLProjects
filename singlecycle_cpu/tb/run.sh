@@ -9,18 +9,18 @@ rm -f cpu_tb.log
 
 file='tb_files.txt'
 
-while read line; do
-    #Reading each line.
-    echo "\nUsing directory : $line"
-    echo "Compiling sources"
+#Reading each line.
+echo "Using directory : ./test/rtype"
+echo "Compiling sources"
 
-    iverilog -DTESTDIR=\"$line\" -o cpu_tb -c program_file.txt
-    if [ $? != 0 ]; then
-        echo "*** Compilation error! Please fix."
-        exit 1;
-    fi
-    ./cpu_tb 
-done < $file
+iverilog -DTESTDIR=\"./test/rtype\" -o cpu_tb -c program_file.txt
+
+if [ $? != 0 ]; then
+    echo "*** Compilation error! Please fix."
+    exit 1;
+fi
+
+./cpu_tb 
 
 retval=$(grep -c FAIL cpu_tb.log)
 if [ $retval -eq 0 ];
@@ -38,4 +38,4 @@ Once all tests pass, commit the changes into your code,
 and push the commit back to the server for evaluation.
 EOF
 
-return $retval 
+exit $retval 
