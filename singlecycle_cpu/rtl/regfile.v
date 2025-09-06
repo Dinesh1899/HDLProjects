@@ -22,7 +22,7 @@ integer j;
 // end
 
 
-initial begin $readmemh({`TESTDIR, "init_regfile.mem"}, RF); end
+initial begin $readmemh({`TESTDIR, "/init_regfile.mem"}, RF); end
 
 assign rv1 = (rs1 !=0) ? RF[rs1] : 0;
 assign rv2 = (rs2 !=0) ? RF[rs2] : 0;

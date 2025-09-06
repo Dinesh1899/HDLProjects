@@ -2,10 +2,10 @@
 003081B3 // add  x3, x1, x3       ; x3 = x1 + x3
 40320233 // sub  x4, x4, x3       ; x4 = x4 - x3
 0020A2B3 // slt  x5, x1, x2       ; x5 = (x1 < x2)?1:0
-0041B333 // xor  x6, x3, x4       ; x6 = x3 ^ x4
-0041C3B3 // srl  x7, x3, x4       ; x7 = x3 >> (x4 & 0x1F)
+0041C333 // xor  x6, x3, x4       ; x6 = x3 ^ x4
+0041D3B3 // srl  x7, x3, x4       ; x7 = x3 >> (x4 & 0x1F)
 0041A433 // or   x8, x3, x4       ; x8 = x3 | x4
-0041A4B3 // and  x9, x3, x4       ; x9 = x3 & x4
+0041F4B3 // and  x9, x3, x4       ; x9 = x3 & x4
 00119433 // sll  x8, x3, x1       ; x8 = x3 << (x1 & 0x1F)
 40328533 // sub  x10, x5, x3      ; x10 = x5 - x3
 00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)

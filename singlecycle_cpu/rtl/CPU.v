@@ -4,7 +4,8 @@ module cpu(
     input [31:0] idata,
     input [31:0] drdata,
     output [31:0] iaddr,
-    output [31:0] wrdata,
+    output [31:0] daddr,
+    output [31:0] dwdata,
     output [3:0] dwe
 );
 
@@ -16,7 +17,8 @@ module cpu(
     end
 
     assign iaddr = PC;
-    assign wrdata = 32'd0;
+    assign dwdata = 32'd0;
+    assign daddr = 32'd0;
     assign dwe = 32'd0;
 
     wire [3:0] aluOp;

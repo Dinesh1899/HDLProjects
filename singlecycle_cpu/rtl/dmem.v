@@ -2,7 +2,7 @@ module dmem(
     input clk,
     input [31:0] daddr,
     input [31:0] dwdata,
-    input [3:0] we,
+    input [3:0] dwe,
     output [31:0] drdata
 );
     reg [7:0] m[0:127];
@@ -18,13 +18,13 @@ module dmem(
 	 assign drdata = {m[add3],m[add2],m[add1],m[add0]};
 	 
     always @(posedge clk) begin
-        if (we[0]==1)
+        if (dwe[0]==1)
             m[add0]= dwdata[7:0];
-        if (we[1]==1)
+        if (dwe[1]==1)
             m[add1]= dwdata[15:8];
-        if (we[2]==1)
+        if (dwe[2]==1)
             m[add2]= dwdata[23:16];
-        if (we[3]==1)
+        if (dwe[3]==1)
             m[add3]= dwdata[31:24];
     end
 	  

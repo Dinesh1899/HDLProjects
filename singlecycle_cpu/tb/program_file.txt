@@ -3,5 +3,5 @@
 ../rtl/decoder.v
 ../rtl/dmem.v
 ../rtl/imem.v
-../rtl/cpu.v
+../rtl/CPU.v
 ../tb/cpu_rtype_tb.v

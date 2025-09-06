@@ -48,8 +48,8 @@ module cpu_tb ();
     initial begin
 	// Uncomment below to dump out VCD file for gtkwave
 	// NOTE: This will NOT work on the jupyter terminal
-        $dumpfile("cpu_tb.vcd");
-        $dumpvars(0, "cpu_tb");
+        // $dumpfile("cpu_tb.vcd");
+        // $dumpvars(0, "cpu_tb");
         $display("RUNNING TEST FROM ", `TESTDIR);
         clk = 1;
         reset = 1;   // This is active high reset
@@ -65,7 +65,7 @@ module cpu_tb ();
         fail = 0;
         // Dump top dmem
         for (i=0; i<32; i=i+1) begin
-            s = $fscanf(exp_file, "%d\n", exp_reg);
+            s = $fscanf(exp_file, "%h\n", exp_reg);
             dtmp = u1.ureg.RF[i];
             if(exp_reg !== dtmp) begin
                 $display("FAIL: Expected Reg[%d] = %x vs. Got Reg[%d] = %x", i, $signed(exp_reg), i, dtmp);
