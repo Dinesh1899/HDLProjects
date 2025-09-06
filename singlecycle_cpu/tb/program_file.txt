@@ -1,0 +1,7 @@
+alu.v
+regfile.v
+decoder.v
+cpu.v
+cpu_rtype_tb.v
+dmem.v
+imem.v

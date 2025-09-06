@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module alu(
     input [31:0] in1,
     input [31:0] in2,
