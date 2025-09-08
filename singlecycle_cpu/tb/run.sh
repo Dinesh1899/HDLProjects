@@ -2,6 +2,11 @@
 #
 # Compile and run the test bench
 
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo "---------------------------------------"
+date
+
 [ -x "$(command -v iverilog)" ] || { echo "Install iverilog"; exit 1; }
 
 # Clear out existing log file
@@ -9,18 +14,18 @@ rm -f cpu_tb.log
 
 file='tb_files.txt'
 
-#Reading each line.
-echo "Using directory : ./test/rtype"
-echo "Compiling sources"
+while read line; do
+    #Reading each line.
+    echo "\nUsing directory : $line"
+    echo "Compiling sources"
 
-iverilog -DTESTDIR=\"./test/rtype\" -o cpu_tb -c program_file.txt
-
-if [ $? != 0 ]; then
-    echo "*** Compilation error! Please fix."
-    exit 1;
-fi
-
-./cpu_tb 
+    iverilog -DTESTDIR=\"$line\" -o cpu_tb.out -c program_file.txt
+    if [ $? != 0 ]; then
+        echo "*** Compilation error! Please fix."
+        exit 1;
+    fi
+    ./cpu_tb.out
+done < $file
 
 retval=$(grep -c FAIL cpu_tb.log)
 if [ $retval -eq 0 ];
@@ -32,10 +37,9 @@ fi
 
 cat << EOF
 
-You should see a PASS message and all tests pass.
-If any test reports as a FAIL, fix it before submitting.
-Once all tests pass, commit the changes into your code,
-and push the commit back to the server for evaluation.
+
 EOF
 
 exit $retval 
+
+## ./run.sh >> cpu_tb_run.log 2>&1

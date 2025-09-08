@@ -7,7 +7,9 @@ cat "$file"
 echo "------------------------"
 
 while read -r line; do
-    echo $line
+    # Reading each line
+    echo "Using directory : $line"
+    echo "Compiling sources"
 done < "$file"
 
 echo "Loop finished."

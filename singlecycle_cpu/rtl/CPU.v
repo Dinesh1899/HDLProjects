@@ -24,13 +24,16 @@ module cpu(
     wire [3:0] aluOp;
     wire [4:0] rs1, rs2, rd;
 
-    decoder udec(
-        .instr(idata),
-        .rs1(rs1),
-        .rs2(rs2),
-        .rd(rd),
-        .aluOp(aluOp)
-    );
+    // decoder udec(
+    //     .instr(idata),
+    //     .rs1(rs1),
+    //     .rs2(rs2),
+    //     .rd(rd),
+    //     .aluOp(aluOp)
+    // );
+
+    assign {rs1, rs2, rd} = {idata[30], idata[14:12], idata[19:15], idata[24:20], idata[11:7]};
+    assign aluOp = {idata[30], idata[14:12]};
 
     wire [31:0] rv1, rv2, alu_out, r31;
 
