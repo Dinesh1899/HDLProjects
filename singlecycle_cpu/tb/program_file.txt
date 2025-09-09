@@ -1,6 +1,7 @@
 ../rtl/alu.v
 ../rtl/regfile.v
 ../rtl/decoder.v
+../rtl/immgen.v
 ../rtl/dmem.v
 ../rtl/imem.v
 ../rtl/CPU.v
