@@ -1,31 +1,57 @@
-module dmem(
+/*
+  Author: Arjun Menon Vadakkeveedu
+  Roll No.: EE18B104
+  Electrical Engineering, IIT Madras
+  October 2020
+  Single Cycle CPU Implementation for RV32I ISA
+  Data Memory Module
+*/
+
+
+`timescale 1ns/1ps
+`define DMEM_N_FILE(x,y) {x,y,".mem"}
+
+module dmem (
     input clk,
     input [31:0] daddr,
     input [31:0] dwdata,
     input [3:0] dwe,
     output [31:0] drdata
 );
-    reg [7:0] m[0:127];
-    initial $readmemh({`TESTDIR, "/init_dmem.mem"},m);
+    // 4K location, 16KB total, split in 4 banks
+    reg [7:0] mem0[0:4095];
+    reg [7:0] mem1[0:4095];
+    reg [7:0] mem2[0:4095];
+    reg [7:0] mem3[0:4095];
 
-    wire [31:0] add0,add1,add2,add3;
-	 
-	 assign add0 = (daddr & 32'hfffffffc) + 32'h00000000;
-	 assign add1 = (daddr & 32'hfffffffc) + 32'h00000001;
-	 assign add2 = (daddr & 32'hfffffffc) + 32'h00000002;
-	 assign add3 = (daddr & 32'hfffffffc) + 32'h00000003;
-	 
-	 assign drdata = {m[add3],m[add2],m[add1],m[add0]};
-	 
-    always @(posedge clk) begin
-        if (dwe[0]==1)
-            m[add0]= dwdata[7:0];
-        if (dwe[1]==1)
-            m[add1]= dwdata[15:8];
-        if (dwe[2]==1)
-            m[add2]= dwdata[23:16];
-        if (dwe[3]==1)
-            m[add3]= dwdata[31:24];
+    wire [29:0] a;
+
+    reg [31:0] mem_word[0:4095];
+
+    initial begin
+        $readmemh({`TESTDIR,"/data0.mem"}, mem0);
+        $readmemh({`TESTDIR,"/data1.mem"}, mem1);
+        $readmemh({`TESTDIR,"/data2.mem"}, mem2);
+        $readmemh({`TESTDIR,"/data3.mem"}, mem3);
     end
-	  
+
+    // Initialize all to zeroes
+    // Later, use store instructions to populate them 
+    // and use the exp_data_out to verify the execution
+
+    // Create test cases for load store instructions and test them
+
+    assign a = daddr[31:2];
+
+    // Selecting bytes to be done inside CPU
+    assign drdata = {mem3[a], mem2[a], mem1[a], mem0[a]};
+
+    always @(posedge clk) begin
+        if (dwe[3]) mem3[a] = dwdata[31:24];
+        if (dwe[2]) mem2[a] = dwdata[23:16];
+        if (dwe[1]) mem1[a] = dwdata[15: 8];
+        if (dwe[0]) mem0[a] = dwdata[ 7: 0];
+    end
+
+
 endmodule

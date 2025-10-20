@@ -17,39 +17,37 @@ module cpu(
     end
 
     assign iaddr = PC;
-    assign dwdata = 32'd0;
-    assign daddr = 32'd0;
-    assign dwe = 32'd0;
 
     wire aluSrc;
-
-    decoder udec(
-        .instr(idata),
-        .aluSrc(aluSrc)
-    );
-
     wire [31:0] immVal;
-
-    immgen uimmgen(
-        .instr(idata),
-        .immVal(immVal)
-    );
-
     wire [3:0] aluOp;
     wire [4:0] rs1, rs2, rd;
 
-    assign {rs1, rs2, rd} = {idata[30], idata[14:12], idata[19:15], idata[24:20], idata[11:7]};
-    assign aluOp = {idata[30], idata[14:12]};
+    wire memReg;
+    wire regWr;
 
-    wire [31:0] rv1, rv2, alu_out, r31;
+    decoder udec(
+        .instr(idata),
+        .aluSrc(aluSrc),
+        .aluOp(aluOp),
+        .immVal(immVal),
+        .dwe(dwe),
+        .memReg(memReg),
+        .regWr(regWr)
+    );
+
+    assign {rs1, rs2, rd} = {idata[19:15], idata[24:20], idata[11:7]};
+    // assign aluOp = {idata[30], idata[14:12]};
+
+    wire [31:0] rv1, rv2, alu_out, r31, reg_in;
 
     regfile ureg(
         .clk(clk),
         .rs1(rs1),
         .rs2(rs2),
         .rd(rd),
-        .indata(alu_out),
-        .we(1'b1),
+        .indata(reg_in),
+        .we(regWr),
         .rv1(rv1),
         .rv2(rv2),
         .x31(r31)
@@ -70,6 +68,18 @@ module cpu(
         .zero(alu_zero)
     );
 
-    
+    wire [31:0] mem_out;
+
+    assign dwdata = rv2;
+    assign daddr = alu_out;
+
+    memregintf umemreg(
+        .func3(idata[14:12]),
+        .indata(drdata),
+        .outdata(mem_out)
+    );
+
+    assign reg_in = memReg ? mem_out : alu_out;
+
 
 endmodule

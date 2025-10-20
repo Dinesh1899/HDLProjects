@@ -1,2 +1,1 @@
-./test/rtype
-./test/itype
+./test/stype

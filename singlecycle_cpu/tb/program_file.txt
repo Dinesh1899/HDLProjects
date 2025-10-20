@@ -4,5 +4,6 @@
 ../rtl/immgen.v
 ../rtl/dmem.v
 ../rtl/imem.v
+../rtl/memregintf.v
 ../rtl/CPU.v
 ../tb/cpu_rtype_tb.v

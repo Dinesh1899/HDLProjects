@@ -35,10 +35,13 @@ else
     echo "Failed $retval cases"
 fi
 
-cat << EOF
+mv *.out build
+mv *.log logs
 
+if [ -f "myfile.txt" ]; then
+    mv cpu_tb.vcd build
+fi
 
-EOF
 
 exit $retval 
 
