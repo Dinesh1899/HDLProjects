@@ -5,5 +5,7 @@
 ../rtl/dmem.v
 ../rtl/imem.v
 ../rtl/memregintf.v
+../rtl/branch_ctrl.v
+../rtl/PC.v
 ../rtl/CPU.v
-../tb/cpu_rtype_tb.v
+../tb/cpu_tb.v

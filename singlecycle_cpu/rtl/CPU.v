@@ -10,10 +10,26 @@ module cpu(
 );
 
     reg [31:0] PC;
+    wire [31:0] pc4;
+    wire [31:0] PC_Next;
+
+    wire taken; 
+    wire[1:0] branch;
+
+    wire [31:0] rv1, rv2, alu_out, r31, reg_in;
+
+    ProgramCounter upc1(
+        .pc(PC),
+        .alu_out(alu_out),
+        .branch(branch),
+        .taken(taken),
+        .pc_next(PC_Next),
+        .pc4(pc4)
+    );
 
     always @(posedge clk) begin
         if(reset) PC <= 32'd0;
-        else PC <= PC + 32'd4;
+        else PC <= PC_Next;
     end
 
     assign iaddr = PC;
@@ -29,6 +45,7 @@ module cpu(
     decoder udec(
         .instr(idata),
         .aluSrc(aluSrc),
+        .branch(branch),
         .aluOp(aluOp),
         .immVal(immVal),
         .dwe(dwe),
@@ -39,7 +56,6 @@ module cpu(
     assign {rs1, rs2, rd} = {idata[19:15], idata[24:20], idata[11:7]};
     // assign aluOp = {idata[30], idata[14:12]};
 
-    wire [31:0] rv1, rv2, alu_out, r31, reg_in;
 
     regfile ureg(
         .clk(clk),
@@ -56,7 +72,7 @@ module cpu(
     wire alu_zero;
     wire [31:0] alu_in1, alu_in2;
 
-    assign alu_in1 = rv1;
+    assign alu_in1 = branch[0] ? PC : rv1;
     assign alu_in2 = aluSrc ? rv2 : immVal;
     
 
@@ -79,7 +95,15 @@ module cpu(
         .outdata(mem_out)
     );
 
-    assign reg_in = memReg ? mem_out : alu_out;
+    assign reg_in = memReg ? mem_out : (branch[1] ? pc4 : alu_out);
+
+
+    BranchDecoder ubd1(
+        .rv1(rv1),
+        .rv2(rv2),
+        .func3(idata[14:12]),
+        .taken(taken)
+    );
 
 
 endmodule

@@ -38,9 +38,11 @@ fi
 mv *.out build
 mv *.log logs
 
-if [ -f "myfile.txt" ]; then
-    mv cpu_tb.vcd build
-fi
+mv cpu_tb.vcd build
+
+# if [ -f "myfile.txt" ]; then
+#     mv cpu_tb.vcd build
+# fi
 
 
 exit $retval 

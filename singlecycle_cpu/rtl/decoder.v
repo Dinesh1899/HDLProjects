@@ -1,6 +1,7 @@
 module decoder(
     input [31:0] instr,
     output aluSrc,
+    output reg [1:0] branch,
     output [3:0] aluOp,
     output [31:0] immVal,
     output reg [3:0] dwe,
@@ -13,11 +14,12 @@ module decoder(
     assign opcode = instr[6:0];
 
     assign aluSrc = (opcode == 7'b0110011); // R-Type Instructions
+    // assign branch = (opcode == 7'b1100011); // Branch Instructions
     assign aluOp[2:0] = (opcode[4:0] == 5'b10011) ? instr[14:12] : 3'b000;
     assign aluOp[3] = aluSrc ? instr[30] : 1'b0;
 
     assign memReg = (opcode == 7'b0000011); // LOAD Instruction
-    assign regWr = ~(opcode == 7'b0100011); // Except for STORE Instruction
+    assign regWr = ~(opcode == 7'b0100011 | opcode == 7'b1100011); // Except for STORE Instruction
     // assign dwe = (opcode == 7'b0100011) ? 4'hf : 4'h0; // STORE Instruction
 
 
@@ -31,6 +33,16 @@ module decoder(
             endcase
         end
         else dwe = 4'b0000;
+    end
+
+
+    always @(*) begin
+        case(opcode) 
+            7'b1100011 : branch = 2'b01; // Conditional Branch
+            7'b1101111 : branch = 2'b11; // JAL
+            7'b1100111 : branch = 2'b10; // JALR
+            default: branch = 2'b00;
+        endcase
     end
 
     immgen uimm(
