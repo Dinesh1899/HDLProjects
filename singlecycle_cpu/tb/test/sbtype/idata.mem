@@ -19,7 +19,9 @@
 010505e7 // jalr x11, 16(x10)
 00c64633 // xor x12, x12, x12
 00000013 // addi x0, x0, 0
-00d6c6b3 // xor x13, x13, x13 
+00d6c6b3 // xor x13, x13, x13
+ffff8717 // auipc x14, -8
+2dead7b7 // lui x15 0x2dead
 // 02208463 // beq  x1, x2, 60
 // 02209e63 // bne  x1, x2, 60
 // 0241ce63 // blt x3, x4, 60

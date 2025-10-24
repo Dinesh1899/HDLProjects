@@ -1,6 +1,7 @@
 module decoder(
     input [31:0] instr,
-    output aluSrc,
+    output [1:0] aluSrc,
+    output [1:0] reginsel,
     output reg [1:0] branch,
     output [3:0] aluOp,
     output [31:0] immVal,
@@ -12,13 +13,22 @@ module decoder(
     wire [6:0] opcode;
 
     assign opcode = instr[6:0];
-
-    assign aluSrc = (opcode == 7'b0110011); // R-Type Instructions
+    // 1 --> PC; Branch or JAL or AUIPC
+    assign aluSrc[0] = (opcode == 7'b1100011 | opcode == 7'b1101111 | opcode == 7'b0010111);
+    // 1 --> Immval 0 --> for rtype
+    assign aluSrc[1] = ~(opcode == 7'b0110011);
     // assign branch = (opcode == 7'b1100011); // Branch Instructions
+
     assign aluOp[2:0] = (opcode[4:0] == 5'b10011) ? instr[14:12] : 3'b000;
-    assign aluOp[3] = aluSrc ? instr[30] : 1'b0;
+    assign aluOp[3] = ~aluSrc[1] ? instr[30] : 1'b0;
 
     assign memReg = (opcode == 7'b0000011); // LOAD Instruction
+    
+    // Reg In Sel, select among alu_out, pc4, immVal
+    // pc4 for JAL, JALR; immVal for LUI; 
+    assign reginsel[1] = (opcode == 7'b1101111 | opcode == 7'b1100111 | opcode == 7'b0110111);
+    assign reginsel[0] = (opcode == 7'b1101111 | opcode == 7'b1100111);
+
     assign regWr = ~(opcode == 7'b0100011 | opcode == 7'b1100011); // Except for STORE Instruction
     // assign dwe = (opcode == 7'b0100011) ? 4'hf : 4'h0; // STORE Instruction
 

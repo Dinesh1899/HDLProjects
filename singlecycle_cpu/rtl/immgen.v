@@ -18,7 +18,9 @@ module immgen(
             7'b1101111 : immVal = {{12{instr[31]}}, instr[19:12], instr[20], instr[30:21] ,1'b0};
                         // imm[20|10:1|11|19:12]; // JAL
             7'b1100111 : immVal = {{20{instr[31]}}, instr[31:20]};
-                        // imm[11:0]; // JALR    
+                        // imm[11:0]; // JALR
+            7'b0010111 : immVal = {instr[31:12], 12'h000}; // AUIPC
+            7'b0110111 : immVal = {instr[31:12], 12'h000}; // LUI    
             default: immVal = 32'h00000000;
         endcase
     end

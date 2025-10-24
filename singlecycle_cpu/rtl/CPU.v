@@ -16,7 +16,7 @@ module cpu(
     wire taken; 
     wire[1:0] branch;
 
-    wire [31:0] rv1, rv2, alu_out, r31, reg_in;
+    wire [31:0] rv1, rv2, alu_out, r31, reg_in, reg_data;
 
     ProgramCounter upc1(
         .pc(PC),
@@ -34,7 +34,9 @@ module cpu(
 
     assign iaddr = PC;
 
-    wire aluSrc;
+    wire [1:0] aluSrc;
+    wire [1:0] regsel;
+
     wire [31:0] immVal;
     wire [3:0] aluOp;
     wire [4:0] rs1, rs2, rd;
@@ -45,6 +47,7 @@ module cpu(
     decoder udec(
         .instr(idata),
         .aluSrc(aluSrc),
+        .reginsel(regsel),
         .branch(branch),
         .aluOp(aluOp),
         .immVal(immVal),
@@ -72,8 +75,11 @@ module cpu(
     wire alu_zero;
     wire [31:0] alu_in1, alu_in2;
 
-    assign alu_in1 = branch[0] ? PC : rv1;
-    assign alu_in2 = aluSrc ? rv2 : immVal;
+    assign alu_in1 = aluSrc[0] ? PC : rv1;
+    assign alu_in2 = aluSrc[1] ? immVal : rv2;
+
+    // assign alu_in1 = branch[0] ? PC : rv1;
+    // assign alu_in2 = aluSrc ? rv2 : immVal;
     
 
     alu u_alu(
@@ -95,7 +101,10 @@ module cpu(
         .outdata(mem_out)
     );
 
-    assign reg_in = memReg ? mem_out : (branch[1] ? pc4 : alu_out);
+    assign reg_data = regsel[1] ? (regsel[0] ? pc4 : immVal) : alu_out;
+    assign reg_in = memReg ? mem_out : reg_data;
+    
+    // assign reg_in = memReg ? mem_out : (branch[1] ? pc4 : alu_out);
 
 
     BranchDecoder ubd1(
