@@ -1,5 +1,5 @@
 `define RTYPE 7'b0110011 
-`define IYPE 7'b0010011
+`define ITYPE 7'b0010011
 `define LOAD 7'b0000011
 `define STORE 7'b0100011 
 `define SBTYPE 7'b1100011 

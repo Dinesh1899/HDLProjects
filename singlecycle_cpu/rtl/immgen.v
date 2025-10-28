@@ -12,7 +12,7 @@ module immgen(
 
     always @(*) begin 
         case (opcode)
-            `IYPE: immVal = {20'h00000, instr[31:20]}; // I type Instructions
+            `ITYPE: immVal = {20'h00000, instr[31:20]}; // I type Instructions
             `STORE: immVal = {20'h00000, instr[31:25], instr[11:7]}; // Store Instructions
             `LOAD: immVal = {20'h00000, instr[31:20]};  // Load Instructions
             `SBTYPE: immVal = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0}; 

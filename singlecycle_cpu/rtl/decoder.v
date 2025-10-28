@@ -5,7 +5,7 @@ module decoder(
     output [1:0] aluSrc,
     output [1:0] reginsel,
     output reg [1:0] branch,
-    output [3:0] aluOp,
+    output reg [3:0] aluOp,
     output [31:0] immVal,
     output reg [3:0] dwe,
     output memReg,
@@ -15,14 +15,10 @@ module decoder(
     wire [6:0] opcode;
 
     assign opcode = instr[6:0];
-    // 1 --> PC; Branch or JAL or AUIPC
-    assign aluSrc[0] = (opcode == `SBTYPE | opcode == `JAL | opcode == `AUIPC);
+    // 1 --> PC; AUIPC
+    assign aluSrc[0] = (opcode == `AUIPC);
     // 1 --> Immval 0 --> for rtype
-    assign aluSrc[1] = ~(opcode == `RTYPE);
-    // assign branch = (opcode == SBTYPE); // Branch Instructions
-
-    assign aluOp[2:0] = (opcode[4:0] == 5'b10011) ? instr[14:12] : 3'b000;
-    assign aluOp[3] = ~aluSrc[1] ? instr[30] : 1'b0;
+    assign aluSrc[1] = (opcode == `ITYPE | opcode == `LOAD | opcode == `STORE | opcode == `AUIPC);
 
     assign memReg = (opcode == `LOAD); // LOAD Instruction
     
@@ -34,6 +30,22 @@ module decoder(
     assign regWr = ~(opcode == `STORE | opcode == `SBTYPE); // Except for STORE Instruction
     // assign dwe = (opcode == STORE) ? 4'hf : 4'h0; // STORE Instruction
 
+    always @(*) begin     
+        case(opcode) 
+            `RTYPE : aluOp = {instr[30], instr[14:12]};
+            `ITYPE : aluOp = {1'b0, instr[14:12]};
+            `SBTYPE: begin 
+                case(instr[14:13]) 
+                    2'b00: aluOp = 4'b1000;
+                    2'b10: aluOp = 4'b0010;
+                    2'b11: aluOp = 4'b0011;
+                    default: aluOp = 4'b0000;
+                endcase
+            end
+            default: aluOp = 4'b0000;
+        endcase
+    end
+    
 
     always @(*) begin
         if(opcode == `STORE) begin 
@@ -61,6 +73,6 @@ module decoder(
         .instr(instr),
         .immVal(immVal)
     );
-    // assign {aluOp, rs1, rs2, rd} = {instr[30], instr[14:12], instr[19:15], instr[24:20], instr[11:7]};
+
 
 endmodule
