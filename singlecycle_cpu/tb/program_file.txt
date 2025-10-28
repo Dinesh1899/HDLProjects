@@ -1,3 +1,4 @@
+../rtl/parameters.vh
 ../rtl/alu.v
 ../rtl/regfile.v
 ../rtl/decoder.v

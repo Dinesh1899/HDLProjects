@@ -1,3 +1,5 @@
+`include "../rtl/parameters.vh"
+
 module decoder(
     input [31:0] instr,
     output [1:0] aluSrc,
@@ -14,27 +16,27 @@ module decoder(
 
     assign opcode = instr[6:0];
     // 1 --> PC; Branch or JAL or AUIPC
-    assign aluSrc[0] = (opcode == 7'b1100011 | opcode == 7'b1101111 | opcode == 7'b0010111);
+    assign aluSrc[0] = (opcode == `SBTYPE | opcode == `JAL | opcode == `AUIPC);
     // 1 --> Immval 0 --> for rtype
-    assign aluSrc[1] = ~(opcode == 7'b0110011);
-    // assign branch = (opcode == 7'b1100011); // Branch Instructions
+    assign aluSrc[1] = ~(opcode == `RTYPE);
+    // assign branch = (opcode == SBTYPE); // Branch Instructions
 
     assign aluOp[2:0] = (opcode[4:0] == 5'b10011) ? instr[14:12] : 3'b000;
     assign aluOp[3] = ~aluSrc[1] ? instr[30] : 1'b0;
 
-    assign memReg = (opcode == 7'b0000011); // LOAD Instruction
+    assign memReg = (opcode == `LOAD); // LOAD Instruction
     
     // Reg In Sel, select among alu_out, pc4, immVal
     // pc4 for JAL, JALR; immVal for LUI; 
-    assign reginsel[1] = (opcode == 7'b1101111 | opcode == 7'b1100111 | opcode == 7'b0110111);
-    assign reginsel[0] = (opcode == 7'b1101111 | opcode == 7'b1100111);
+    assign reginsel[1] = (opcode == `JAL | opcode == `JALR | opcode == `LUI);
+    assign reginsel[0] = (opcode == `JAL | opcode == `JALR);
 
-    assign regWr = ~(opcode == 7'b0100011 | opcode == 7'b1100011); // Except for STORE Instruction
-    // assign dwe = (opcode == 7'b0100011) ? 4'hf : 4'h0; // STORE Instruction
+    assign regWr = ~(opcode == `STORE | opcode == `SBTYPE); // Except for STORE Instruction
+    // assign dwe = (opcode == STORE) ? 4'hf : 4'h0; // STORE Instruction
 
 
     always @(*) begin
-        if(opcode == 7'b0100011) begin 
+        if(opcode == `STORE) begin 
             case(instr[14:12]) 
                 3'b000:  dwe = 4'b0001;
                 3'b001:  dwe = 4'b0011;
@@ -48,9 +50,9 @@ module decoder(
 
     always @(*) begin
         case(opcode) 
-            7'b1100011 : branch = 2'b01; // Conditional Branch
-            7'b1101111 : branch = 2'b11; // JAL
-            7'b1100111 : branch = 2'b10; // JALR
+            `SBTYPE : branch = 2'b01; // Conditional Branch
+            `JAL : branch = 2'b11; // JAL
+            `JALR : branch = 2'b10; // JALR
             default: branch = 2'b00;
         endcase
     end
