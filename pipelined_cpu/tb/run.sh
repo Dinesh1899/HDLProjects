@@ -1,0 +1,1 @@
+./build.sh >> logs/cpu_tb_run.log 2>&1

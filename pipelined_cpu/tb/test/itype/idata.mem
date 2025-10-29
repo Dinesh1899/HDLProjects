@@ -1,0 +1,32 @@
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00108093  // addi  x1, x1, 1      -> x1 = 1+1
+00410113  // addi  x2, x2, 4      -> x2 = 2+4
+0051A213  // slti  x4, x3, 5      -> x4 = (3<5)?1:0
+0051A293  // sltiu x5, x3, 5      -> x5 = (3<5)?1:0
+0FF1C313  // xori  x6, x3, 0xFF   -> x6 = 3 ^ 255
+0F01E393  // ori   x7, x3, 0xF0   -> x7 = 3 | 0xF0
+00F1F413  // andi  x8, x3, 0xF    -> x8 = 3 & 15
+00111493  // slli  x9, x2, 1      -> x9 = x2<<1
+00115513  // srli  x10, x2, 1     -> x10= x2>>1 (logical)
+40115593  // srai  x11, x2, 1     -> x11= x2>>1 (arith)
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013  // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013

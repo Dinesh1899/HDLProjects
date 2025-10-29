@@ -1,0 +1,12 @@
+../rtl/parameters.vh
+../rtl/alu.v
+../rtl/regfile.v
+../rtl/decoder.v
+../rtl/immgen.v
+../rtl/dmem.v
+../rtl/imem.v
+../rtl/memregintf.v
+../rtl/branch_ctrl.v
+../rtl/PC.v
+../rtl/CPU.v
+../tb/cpu_tb.v

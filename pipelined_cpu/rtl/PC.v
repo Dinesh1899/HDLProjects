@@ -1,34 +1,28 @@
-`timescale 1ns / 1ps
+module ProgramCounter(
+    input clk,
+    input reset,
+    input [31:0] pc4,
+    input [31:0] pc_branch,
+    input [1:0] branch,
+    input taken,
+    output reg[31:0] pc
+);
 
-module PC(
-    input [31:0] PC,
-    input [31:0] immgen,
-    input [2:0] branch,
-    input zero,
-	 input [31:0] aluoutdata,
-	 output [31:0] PC_plus4,
-	 output [31:0] PC_next,
-    output PCsrc
-    );
-	 
+    reg [31:0] pc_next;
 
-assign PC_plus4 = PC + 32'd4;
+    always @(*) begin
+        case(branch) 
+            2'b01: pc_next = taken ? pc_branch : pc4; // Conditional Branch
+            2'b10: pc_next = pc_branch; // JALR
+            2'b11: pc_next = pc_branch; // JAL
+            2'b00: pc_next = pc4;
+            default: pc_next = pc4;
+        endcase
+    end
 
-wire [31:0] PC_branch;
-assign PC_branch = PC + immgen;
+    always @(posedge clk) begin
+        if(reset) pc <= 32'd0;
+        else pc <= pc_next;
+    end    
 
-assign PC_next = (branch == 3'b001 && (~zero) ) ? PC_branch : //BNE, BLT, BLTU
-                 (branch == 3'b001 && zero ) ? PC_plus4 :
-					  (branch == 3'b010 && zero ) ? PC_branch : // BEQ, BGE, BGEU
-                 (branch == 3'b010 && (~zero) ) ? PC_plus4 : 
-					  (branch == 3'b011) ?  PC_branch :  // JAL
-					  (branch == 3'b100) ? (aluoutdata & 32'hFFFFFFFE) :PC_plus4; //JALR
-
-assign PCsrc =  (branch == 3'b000) ? 1'b0 :
-					  (branch == 3'b001 && (~zero) ) ? 1'b1 : //BNE, BLT, BLTU
-                 (branch == 3'b001 && zero ) ? 1'b0 :
-					  (branch == 3'b010 && zero ) ? 1'b1 : // BEQ, BGE, BGEU
-                 (branch == 3'b010 && (~zero) ) ? 1'b0 : 
-					  (branch == 3'b011) ?  1'b1 :  // JAL
-					  (branch == 3'b100) ? 1'b1 : 1'b0; //JALR
 endmodule

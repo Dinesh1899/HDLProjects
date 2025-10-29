@@ -1,23 +1,24 @@
-`timescale 1ns / 1ps
-
 module alu(
     input [31:0] in1,
     input [31:0] in2,
     input [3:0] alucon,
-    output [31:0] out,
+    output reg [31:0] out,
     output zero
     );
 	assign zero = (out == 0);
-	 
-	assign out = (alucon== 0) ?  in1 + in2: //ADD
-					(alucon == 8) ?  in1 - in2: //SUB
-					(alucon == 1) ?  in1 << in2[4:0]: //SLL
-					(alucon == 2) ?  {{31{1'b0}}, ($signed(in1) < $signed(in2))}: //SLT
-					(alucon == 3) ?  {{31{1'b0}}, (in1 < in2)}: //SLTU
-					(alucon == 4) ?  in1 ^ in2: //XOR
-					(alucon == 5) ?  in1 >> in2[4:0]: //SRL
-					(alucon == 13) ?  $signed(in1) >>> in2[4:0]: //SRA
-					(alucon == 6) ?  in1 | in2: //OR
-					(alucon == 7) ?  in1 & in2 : 32'h00000000; //AND
-			 
+	always @(*) begin
+		case (alucon)
+			0 : out <= in1 + in2; //ADD
+			8 : out <= in1 - in2; //SUB
+			1 : out <= in1 << in2[4:0]; //SLL
+			2 : out <= {{31{1'b0}}, ($signed(in1) < $signed(in2))}; //SLT
+			3 : out <= {{31{1'b0}}, (in1 < in2)}; //SLTU
+			4 : out <= in1 ^ in2; //XOR
+			5 : out <= in1 >> in2[4:0]; //SRL
+			13 : out <= $signed(in1) >>> in2[4:0]; //SRA
+			6 : out <= in1 | in2; //OR
+			7 : out <= in1 & in2; //AND
+			default: out <= 32'h00000000;
+		endcase
+		end
 endmodule
