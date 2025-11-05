@@ -5,6 +5,8 @@
 00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
 40320233 // sub  x4, x4, x3       ; x4 = x4 - x3
 0020A2B3 // slt  x5, x1, x2       ; x5 = (x1 < x2)?1:0
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
 0041C333 // xor  x6, x3, x4       ; x6 = x3 ^ x4
 0041D3B3 // srl  x7, x3, x4       ; x7 = x3 >> (x4 & 0x1F)
 0041A433 // or   x8, x3, x4       ; x8 = x3 | x4
@@ -17,6 +19,10 @@
 00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
 00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
 00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013
+00000013
+00000013
+00000013
 00000013
 00000013
 00000013

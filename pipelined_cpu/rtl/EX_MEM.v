@@ -31,30 +31,30 @@ module ExecuteMemIntf(
 
     always @(posedge clk or posedge reset) begin
         if(reset) begin 
-            mem_alu_out_in = 0;
-            mem_alu_zero_in = 0;
-            mem_pc_imm_in = 0;
-            mem_imm_in = 0;
-            mem_rd_in = 0;
-            mem_reg_in_sel_in = 0;
-            mem_dwe_in = 0;
-            mem_func3_in = 0;
-            mem_mem_reg_in = 0;
-            mem_reg_wr_in = 0;
-            mem_rv1_in = 0;
+            mem_alu_out_in <= 0;
+            mem_alu_zero_in <= 0;
+            mem_pc_imm_in <= 0;
+            mem_imm_in <= 0;
+            mem_rd_in <= 0;
+            mem_reg_in_sel_in <= 0;
+            mem_dwe_in <= 0;
+            mem_func3_in <= 0;
+            mem_mem_reg_in <= 0;
+            mem_reg_wr_in <= 0;
+            mem_rv1_in <= 0;
         end
         else begin 
-            mem_alu_out_in = ex_alu_out_out;
-            mem_alu_zero_in = ex_alu_zero_out;
-            mem_pc_imm_in = ex_pc_imm_out;
-            mem_imm_in = ex_imm_out;
-            mem_rd_in = ex_rd_out;
-            mem_reg_in_sel_in = ex_reg_in_sel_out;
-            mem_dwe_in = ex_dwe_out;
-            mem_func3_in = ex_func3_out;
-            mem_mem_reg_in = ex_mem_reg_out;
-            mem_reg_wr_in = ex_reg_wr_out;
-            mem_rv1_in = ex_rv1_out;            
+            mem_alu_out_in <= ex_alu_out_out;
+            mem_alu_zero_in <= ex_alu_zero_out;
+            mem_pc_imm_in <= ex_pc_imm_out;
+            mem_imm_in <= ex_imm_out;
+            mem_rd_in <= ex_rd_out;
+            mem_reg_in_sel_in <= ex_reg_in_sel_out;
+            mem_dwe_in <= ex_dwe_out;
+            mem_func3_in <= ex_func3_out;
+            mem_mem_reg_in <= ex_mem_reg_out;
+            mem_reg_wr_in <= ex_reg_wr_out;
+            mem_rv1_in <= ex_rv1_out;            
         end
     end
 
