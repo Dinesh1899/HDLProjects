@@ -1,13 +1,3 @@
-/*
-  Author: Arjun Menon Vadakkeveedu
-  Roll No.: EE18B104
-  Electrical Engineering, IIT Madras
-  October 2020
-  Single Cycle CPU Implementation for RV32I ISA
-  Data Memory Module
-*/
-
-
 `timescale 1ns/1ps
 `define DMEM_N_FILE(x,y) {x,y,".mem"}
 

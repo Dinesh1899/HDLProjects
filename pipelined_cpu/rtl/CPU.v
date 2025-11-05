@@ -9,102 +9,286 @@ module cpu(
     output [3:0] dwe
 );
 
-    wire [31:0] PC;
-    wire [31:0] pc4, pc_branch, pc_in;
+    reg [31:0] PC;
 
-    wire taken; 
-    wire[1:0] branch;
+    always @(posedge clk or posedge reset) begin
+        if(reset) PC <= 0;
+        else PC <= PC + 4;
+    end
 
-    wire [31:0] rv1, rv2, alu_out, r31, reg_in, reg_data;
-
-    wire [31:0] immVal;
-
-    assign pc4 = PC + 32'd4;
-
-    assign pc_in = branch == 2'b10 ? rv1 : PC; 
-    assign pc_branch = pc_in + immVal;
-
-    ProgramCounter upc1(
-        .clk(clk),
-        .reset(reset),
-        .pc_branch(pc_branch),
-        .pc4(pc4),        
-        .branch(branch),
-        .taken(taken),
-        .pc(PC)        
-    );
 
     assign iaddr = PC;
 
-    wire [1:0] aluSrc;
-    wire [1:0] regsel;
+    wire [31:0] id_idata_in, id_pc_in;
 
-    wire [3:0] aluOp;
-    wire [4:0] rs1, rs2, rd;
-
-    wire memReg;
-    wire regWr;
-
-    decoder udec(
-        .instr(idata),
-        .aluSrc(aluSrc),
-        .reginsel(regsel),
-        .branch(branch),
-        .aluOp(aluOp),
-        .immVal(immVal),
-        .dwe(dwe),
-        .memReg(memReg),
-        .regWr(regWr)
-    );
-
-    assign {rs1, rs2, rd} = {idata[19:15], idata[24:20], idata[11:7]};
-
-
-    regfile ureg(
+    FetchDecodeIntf ifidreg(
         .clk(clk),
-        .rs1(rs1),
-        .rs2(rs2),
-        .rd(rd),
-        .indata(reg_in),
-        .we(regWr),
-        .rv1(rv1),
-        .rv2(rv2),
-        .x31(r31)
+        .reset(reset),
+        .if_idata_in(idata),
+        .if_pc_in(PC),
+        .if_idata_out(id_idata_in),
+        .if_pc_out(id_pc_in)
     );
 
-    wire alu_zero;
-    wire [31:0] alu_in1, alu_in2;
+    wire id_reg_wr_in;
+    wire [4:0] id_rd_in;
+    wire [31:0] id_reg_data_in;
 
-    assign alu_in1 = aluSrc[0] ? PC : rv1;
-    assign alu_in2 = aluSrc[1] ? immVal : rv2;
+    wire [1:0] id_alu_src_out;
+    wire [3:0] id_alu_op_out;
+    wire [1:0] id_branch_out;
+    wire [1:0] id_reg_in_sel_out;
+    wire [3:0] id_dwe_out;
+    wire [2:0] id_func3_out;
+    wire id_mem_reg_out;
+    wire id_reg_wr_out;
 
-    alu u_alu(
-        .in1(alu_in1),
-        .in2(alu_in2),
-        .alucon(aluOp),
-        .out(alu_out),
-        .zero(alu_zero)
+    wire [31:0] id_rv1_out;
+    wire [31:0] id_rv2_out;
+    wire [31:0] id_imm_out;
+    wire [4:0] id_rd_out;
+    wire [31:0] id_pc_out;
+    wire [31:0] id_x31_out;
+
+    Decode udecode(
+        .clk(clk),
+        .id_idata_in(id_idata_in),
+        .id_pc_in(id_pc_in),
+        .id_reg_wr_in(id_reg_wr_in),
+        .id_rd_in(id_rd_in),
+        .id_reg_data_in(id_reg_data_in),
+        .id_alu_src_out(id_alu_src_out),
+        .id_alu_op_out(id_alu_op_out),
+        .id_branch_out(id_branch_out),
+        .id_reg_in_sel_out(id_reg_in_sel_out),
+        .id_dwe_out(id_dwe_out),
+        .id_func3_out(id_func3_out),
+        .id_mem_reg_out(id_mem_reg_out),
+        .id_reg_wr_out(id_reg_wr_out),
+        .id_rv1_out(id_rv1_out),
+        .id_rv2_out(id_rv2_out),
+        .id_imm_out(id_imm_out),
+        .id_rd_out(id_rd_out),
+        .id_pc_out(id_pc_out),
+        .id_x31_out(id_x31_out)   
     );
 
-    wire [31:0] mem_out;
+    wire [1:0] ex_alu_src_in;
+    wire [3:0] ex_alu_op_in;
+    wire [1:0] ex_branch_in;
+    wire [1:0] ex_reg_in_sel_in;
+    wire [3:0] ex_dwe_in;
+    wire [2:0] ex_func3_in;
+    wire ex_mem_reg_in;
+    wire ex_reg_wr_in;
 
-    assign dwdata = rv2;
-    assign daddr = alu_out;
+    wire [31:0] ex_rv1_in;
+    wire [31:0] ex_rv2_in;
+    wire [31:0] ex_imm_in;
+    wire [4:0] ex_rd_in;
+    wire [31:0] ex_pc_in;
+    wire [31:0] ex_x31_in;
 
-    memregintf umemreg(
-        .func3(idata[14:12]),
-        .indata(drdata),
-        .outdata(mem_out)
+    wire [31:0] ex_alu_out_out;
+    wire ex_alu_zero_out;
+    wire [31:0] ex_rv1_out;
+
+    wire [31:0] ex_pc_imm_out;
+    wire [31:0] ex_imm_out;
+
+    wire [4:0] ex_rd_out;
+    wire [1:0] ex_reg_in_sel_out;
+    wire [3:0] ex_dwe_out;
+    wire [2:0] ex_func3_out;
+    wire ex_mem_reg_out;
+    wire ex_reg_wr_out;
+
+    DecodeExecuteIntf idexreg(
+        .clk(clk),
+        .reset(reset),
+        .id_alu_src_out(id_alu_src_out),
+        .id_alu_op_out(id_alu_op_out),
+        .id_branch_out(id_branch_out),
+        .id_reg_in_sel_out(id_reg_in_sel_out),
+        .id_dwe_out(id_dwe_out),
+        .id_func3_out(id_func3_out),
+        .id_mem_reg_out(id_mem_reg_out),
+        .id_reg_wr_out(id_reg_wr_out),
+        .id_rv1_out(id_rv1_out),
+        .id_rv2_out(id_rv2_out),
+        .id_imm_out(id_imm_out),
+        .id_rd_out(id_rd_out),
+        .id_pc_out(id_pc_out),
+        .ex_alu_src_in(ex_alu_src_in),
+        .ex_alu_op_in(ex_alu_op_in),
+        .ex_branch_in(ex_branch_in),
+        .ex_reg_in_sel_in(ex_reg_in_sel_in),
+        .ex_dwe_in(ex_dwe_in),
+        .ex_func3_in(ex_func3_in),
+        .ex_mem_reg_in(ex_mem_reg_in),
+        .ex_reg_wr_in(ex_reg_wr_in),
+        .ex_rv1_in(ex_rv1_in),
+        .ex_rv2_in(ex_rv2_in),
+        .ex_imm_in(ex_imm_in),
+        .ex_rd_in(ex_rd_in),
+        .ex_pc_in(ex_pc_in)
     );
 
-    assign reg_data = regsel[1] ? (regsel[0] ? pc4 : immVal) : alu_out;
-    assign reg_in = memReg ? mem_out : reg_data;
-
-    BranchDecoder ubd1(
-        .alu_zero(alu_zero),
-        .func3(idata[14:12]),
-        .taken(taken)
+    ExecuteUnit uexec(
+        .ex_alu_src_in(ex_alu_src_in),
+        .ex_alu_op_in(ex_alu_op_in),
+        .ex_branch_in(ex_branch_in),
+        .ex_reg_in_sel_in(ex_reg_in_sel_in),
+        .ex_dwe_in(ex_dwe_in),
+        .ex_func3_in(ex_func3_in),
+        .ex_mem_reg_in(ex_mem_reg_in),
+        .ex_reg_wr_in(ex_reg_wr_in),
+        .ex_rv1_in(ex_rv1_in),
+        .ex_rv2_in(ex_rv2_in),
+        .ex_imm_in(ex_imm_in),
+        .ex_rd_in(ex_rd_in),
+        .ex_pc_in(ex_pc_in),
+        .ex_alu_out_out(ex_alu_out_out),
+        .ex_alu_zero_out(ex_alu_zero_out),
+        .ex_rv1_out(ex_rv1_out),
+        .ex_pc_imm_out(ex_pc_imm_out),
+        .ex_imm_out(ex_imm_out),
+        .ex_rd_out(ex_rd_out),
+        .ex_reg_in_sel_out(ex_reg_in_sel_out),
+        .ex_dwe_out(ex_dwe_out),
+        .ex_func3_out(ex_func3_out),
+        .ex_mem_reg_out(ex_mem_reg_out),
+        .ex_reg_wr_out(ex_reg_wr_out)        
     );
+    
+    ///////////////////////////
+    wire [31:0] mem_alu_out_in;
+    wire [31:0] mem_rv1_in;
+    wire [31:0] mem_pc_imm_in;
+    wire [31:0] mem_imm_in;
+
+    wire [4:0] mem_rd_in;
+    wire [1:0] mem_reg_in_sel_in;
+    wire [3:0] mem_dwe_in;
+    wire [2:0] mem_func3_in;
+    wire mem_mem_reg_in;
+    wire mem_reg_wr_in;
+    ///////////////////////////
+
+    wire [31:0] mem_alu_out_out;
+    wire [31:0] mem_data_out;
+    wire [31:0] mem_pc_imm_out;
+    wire [31:0] mem_imm_out;
+    wire [4:0] mem_rd_out;
+    wire [1:0] mem_reg_in_sel_out;
+    wire mem_mem_reg_out;
+    wire mem_reg_wr_out;
+
+    ExecuteMemIntf exmemreg(
+        .clk(clk),
+        .reset(reset),
+        .ex_alu_out_out(ex_alu_out_out),
+        .ex_alu_zero_out(ex_alu_zero_out),
+        .ex_rv1_out(ex_rv1_out),
+        .ex_pc_imm_out(ex_pc_imm_out),
+        .ex_imm_out(ex_imm_out),
+        .ex_rd_out(ex_rd_out),
+        .ex_reg_in_sel_out(ex_reg_in_sel_out),
+        .ex_dwe_out(ex_dwe_out),
+        .ex_func3_out(ex_func3_out),
+        .ex_mem_reg_out(ex_mem_reg_out),
+        .ex_reg_wr_out(ex_reg_wr_out),
+        .mem_alu_out_in(mem_alu_out_in),
+        .mem_alu_zero_in(mem_alu_zero_in),
+        .mem_rv1_in(mem_rv1_in),
+        .mem_pc_imm_in(mem_pc_imm_in),
+        .mem_imm_in(mem_imm_in),
+        .mem_rd_in(mem_rd_in),
+        .mem_reg_in_sel_in(mem_reg_in_sel_in),
+        .mem_dwe_in(mem_dwe_in),
+        .mem_func3_in(mem_func3_in),
+        .mem_mem_reg_in(mem_mem_reg_in),
+        .mem_reg_wr_in(mem_reg_wr_in)        
+    );
+
+
+    CPUMemIntf ucpumemintf(
+        .mem_alu_out_in(mem_alu_out_in),
+        .mem_data_in(drdata),
+        .mem_rv1_in(mem_rv1_in),
+        .mem_pc_imm_in(mem_pc_imm_in),
+        .mem_imm_in(mem_imm_in),
+        .mem_rd_in(mem_rd_in),
+        .mem_reg_in_sel_in(mem_reg_in_sel_in),
+        .mem_dwe_in(mem_dwe_in),
+        .mem_func3_in(mem_func3_in),
+        .mem_mem_reg_in(mem_mem_reg_in),
+        .mem_reg_wr_in(mem_reg_wr_in),
+        .mem_alu_out_out(mem_alu_out_out),
+        .mem_data_out(mem_data_out),
+        .mem_pc_imm_out(mem_pc_imm_out),
+        .mem_imm_out(mem_imm_out),
+        .mem_dwe_out(dwe),
+        .mem_daddr_out(daddr),
+        .mem_dwdata_out(dwdata),
+        .mem_rd_out(mem_rd_out),
+        .mem_reg_in_sel_out(mem_reg_in_sel_out),
+        .mem_mem_reg_out(mem_mem_reg_out),
+        .mem_reg_wr_out(mem_reg_wr_out)
+    );
+
+    wire [31:0] wb_alu_out_in;
+    wire [31:0] wb_mem_data_in;
+    wire [31:0] wb_pc_imm_in;
+    wire [31:0] wb_imm_in;
+    wire [4:0] wb_rd_in;
+    wire [1:0] wb_reg_in_sel_in;
+    wire wb_mem_reg_in;
+    wire wb_reg_wr_in;
+
+    MemWBIntf memwbreg(
+        .clk(clk),
+        .reset(reset),
+        .mem_alu_out_out(mem_alu_out_out),
+        .mem_data_out(mem_data_out),
+        .mem_pc_imm_out(mem_pc_imm_out),
+        .mem_imm_out(mem_imm_out),
+        .mem_rd_out(mem_rd_out),
+        .mem_reg_in_sel_out(mem_reg_in_sel_out),
+        .mem_mem_reg_out(mem_mem_reg_out),
+        .mem_reg_wr_out(mem_reg_wr_out),
+
+        .wb_alu_out_in(wb_alu_out_in),
+        .wb_mem_data_in(wb_mem_data_in),
+        .wb_pc_imm_in(wb_pc_imm_in),
+        .wb_imm_in(wb_imm_in),
+        .wb_rd_in(wb_rd_in),
+        .wb_reg_in_sel_in(wb_reg_in_sel_in),
+        .wb_mem_reg_in(wb_mem_reg_in),
+        .wb_reg_wr_in(wb_reg_wr_in)
+    );
+
+    wire [4:0] wb_rd_out;
+    wire [31:0] wb_reg_wr_data_out;
+    wire wb_reg_wr_out;
+
+    WBUnit uwbunit(
+        .wb_alu_out_in(wb_alu_out_in),
+        .wb_mem_data_in(wb_mem_data_in),
+        .wb_pc_imm_in(wb_pc_imm_in),
+        .wb_imm_in(wb_imm_in),
+        .wb_rd_in(wb_rd_in),
+        .wb_reg_in_sel_in(wb_reg_in_sel_in),
+        .wb_mem_reg_in(wb_mem_reg_in),
+        .wb_reg_wr_in(wb_reg_wr_in),
+        .wb_rd_out(wb_rd_out),
+        .wb_reg_wr_data_out(wb_reg_wr_data_out),
+        .wb_reg_wr_out(wb_reg_wr_out)
+    );
+
+    assign id_reg_wr_in = wb_reg_wr_out;
+    assign id_rd_in = wb_rd_out;
+    assign id_reg_data_in = wb_reg_wr_data_out;
 
 
 endmodule

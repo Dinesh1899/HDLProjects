@@ -1,6 +1,6 @@
 `include "../rtl/parameters.vh"
 
-module decoder(
+module ControlUnit(
     input [31:0] instr,
     output [1:0] aluSrc,
     output [1:0] reginsel,
