@@ -12,20 +12,11 @@ module regfile(
 
 reg [31:0] RF[0:31];
 
-integer i;
-
-integer j;
-
-// initial begin
-//   for(j = 0; j < 32; j = j+1) 
-//     RF[j] = {32{1'b0}};
-// end
-
 
 initial begin $readmemh({`TESTDIR, "/init_regfile.mem"}, RF); end
 
-assign rv1 = (rs1 !=0) ? RF[rs1] : 0;
-assign rv2 = (rs2 !=0) ? RF[rs2] : 0;
+assign rv1 = (rs1 != 0) ? ((rs1 == rd && we != 4'd0) ? indata : RF[rs1]) : 0;
+assign rv2 = (rs2 != 0) ? ((rs2 == rd && we != 4'd0) ? indata : RF[rs2]) : 0;
 assign x31 = RF[31];
 
  
