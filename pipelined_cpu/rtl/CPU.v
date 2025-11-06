@@ -91,7 +91,7 @@ module cpu(
 
     wire [31:0] ex_alu_out_out;
     wire ex_alu_zero_out;
-    wire [31:0] ex_rv1_out;
+    wire [31:0] ex_rv2_out;
 
     wire [31:0] ex_pc_imm_out;
     wire [31:0] ex_imm_out;
@@ -150,7 +150,7 @@ module cpu(
         .ex_pc_in(ex_pc_in),
         .ex_alu_out_out(ex_alu_out_out),
         .ex_alu_zero_out(ex_alu_zero_out),
-        .ex_rv1_out(ex_rv1_out),
+        .ex_rv2_out(ex_rv2_out),
         .ex_pc_imm_out(ex_pc_imm_out),
         .ex_imm_out(ex_imm_out),
         .ex_rd_out(ex_rd_out),
@@ -163,7 +163,7 @@ module cpu(
     
     ///////////////////////////
     wire [31:0] mem_alu_out_in;
-    wire [31:0] mem_rv1_in;
+    wire [31:0] mem_rv2_in;
     wire [31:0] mem_pc_imm_in;
     wire [31:0] mem_imm_in;
 
@@ -189,7 +189,7 @@ module cpu(
         .reset(reset),
         .ex_alu_out_out(ex_alu_out_out),
         .ex_alu_zero_out(ex_alu_zero_out),
-        .ex_rv1_out(ex_rv1_out),
+        .ex_rv2_out(ex_rv2_out),
         .ex_pc_imm_out(ex_pc_imm_out),
         .ex_imm_out(ex_imm_out),
         .ex_rd_out(ex_rd_out),
@@ -200,7 +200,7 @@ module cpu(
         .ex_reg_wr_out(ex_reg_wr_out),
         .mem_alu_out_in(mem_alu_out_in),
         .mem_alu_zero_in(mem_alu_zero_in),
-        .mem_rv1_in(mem_rv1_in),
+        .mem_rv2_in(mem_rv2_in),
         .mem_pc_imm_in(mem_pc_imm_in),
         .mem_imm_in(mem_imm_in),
         .mem_rd_in(mem_rd_in),
@@ -215,7 +215,7 @@ module cpu(
     CPUMemIntf ucpumemintf(
         .mem_alu_out_in(mem_alu_out_in),
         .mem_data_in(drdata),
-        .mem_rv1_in(mem_rv1_in),
+        .mem_rv2_in(mem_rv2_in),
         .mem_pc_imm_in(mem_pc_imm_in),
         .mem_imm_in(mem_imm_in),
         .mem_rd_in(mem_rd_in),

@@ -2,7 +2,7 @@ module ExecuteMemIntf(
     input clk,
     input reset,
     input [31:0] ex_alu_out_out,
-    input [31:0] ex_rv1_out,
+    input [31:0] ex_rv2_out,
     input ex_alu_zero_out,
     input [31:0] ex_pc_imm_out,
     input [31:0] ex_imm_out,
@@ -15,7 +15,7 @@ module ExecuteMemIntf(
     input ex_reg_wr_out,
 
     output reg [31:0] mem_alu_out_in,
-    output reg [31:0] mem_rv1_in,
+    output reg [31:0] mem_rv2_in,
     output reg mem_alu_zero_in,
     output reg [31:0] mem_pc_imm_in,
     output reg [31:0] mem_imm_in,
@@ -41,7 +41,7 @@ module ExecuteMemIntf(
             mem_func3_in <= 0;
             mem_mem_reg_in <= 0;
             mem_reg_wr_in <= 0;
-            mem_rv1_in <= 0;
+            mem_rv2_in <= 0;
         end
         else begin 
             mem_alu_out_in <= ex_alu_out_out;
@@ -54,7 +54,7 @@ module ExecuteMemIntf(
             mem_func3_in <= ex_func3_out;
             mem_mem_reg_in <= ex_mem_reg_out;
             mem_reg_wr_in <= ex_reg_wr_out;
-            mem_rv1_in <= ex_rv1_out;            
+            mem_rv2_in <= ex_rv2_out;            
         end
     end
 

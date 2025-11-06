@@ -73,7 +73,7 @@ module cpu_tb ();
             s = $fscanf(exp_data_out_file, "%h\n", exp_data);
             dtmp = {u3.mem3[i], u3.mem2[i], u3.mem1[i], u3.mem0[i]};
             if(exp_data !== dtmp) begin
-                //$display("FAIL: Expected Mem[%d] = %x vs. Got Mem[%d] = %x", i, $signed(exp_data), i, dtmp);
+                $display("FAIL: Expected Mem[%d] = %x vs. Got Mem[%d] = %x", i, $signed(exp_data), i, dtmp);
                 fail = fail + 1;
             end
             else begin 

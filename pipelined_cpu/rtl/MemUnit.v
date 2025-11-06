@@ -2,7 +2,7 @@ module CPUMemIntf(
     
     input [31:0] mem_alu_out_in,
     input [31:0] mem_data_in,
-    input [31:0] mem_rv1_in,
+    input [31:0] mem_rv2_in,
     input [31:0] mem_pc_imm_in,
     input [31:0] mem_imm_in,
 
@@ -29,7 +29,7 @@ module CPUMemIntf(
 
     assign mem_dwe_out = mem_dwe_in;
     assign mem_daddr_out = mem_alu_out_in;
-    assign mem_dwdata_out = mem_rv1_in; 
+    assign mem_dwdata_out = mem_rv2_in; 
 
     memregintf umemreg(
         .func3(mem_func3_in),
