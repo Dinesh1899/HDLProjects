@@ -11,6 +11,7 @@
 ../rtl/controlunit.v
 ../rtl/Decode.v
 ../rtl/ID_EX.v
+../rtl/forwarding_unit.v
 ../rtl/ExecuteUnit.v
 ../rtl/EX_MEM.v
 ../rtl/MemUnit.v

@@ -48,6 +48,10 @@ module cpu(
     wire [31:0] id_imm_out;
     wire [4:0] id_rd_out;
     wire [31:0] id_pc_out;
+
+    wire [4:0] id_rs1_out;
+    wire [4:0] id_rs2_out;
+
     wire [31:0] id_x31_out;
 
     Decode udecode(
@@ -70,6 +74,8 @@ module cpu(
         .id_imm_out(id_imm_out),
         .id_rd_out(id_rd_out),
         .id_pc_out(id_pc_out),
+        .id_rs1_out(id_rs1_out),
+        .id_rs2_out(id_rs2_out),
         .id_x31_out(id_x31_out)   
     );
 
@@ -82,6 +88,8 @@ module cpu(
     wire ex_mem_reg_in;
     wire ex_reg_wr_in;
 
+    wire [4:0] ex_rs1_in;
+    wire [4:0] ex_rs2_in;
     wire [31:0] ex_rv1_in;
     wire [31:0] ex_rv2_in;
     wire [31:0] ex_imm_in;
@@ -119,6 +127,8 @@ module cpu(
         .id_imm_out(id_imm_out),
         .id_rd_out(id_rd_out),
         .id_pc_out(id_pc_out),
+        .id_rs1_out(id_rs1_out),
+        .id_rs2_out(id_rs2_out),
         .ex_alu_src_in(ex_alu_src_in),
         .ex_alu_op_in(ex_alu_op_in),
         .ex_branch_in(ex_branch_in),
@@ -131,7 +141,23 @@ module cpu(
         .ex_rv2_in(ex_rv2_in),
         .ex_imm_in(ex_imm_in),
         .ex_rd_in(ex_rd_in),
-        .ex_pc_in(ex_pc_in)
+        .ex_pc_in(ex_pc_in),
+        .ex_rs1_in(ex_rs1_in),
+        .ex_rs2_in(ex_rs2_in)        
+    );
+
+    wire [1:0] fwd_rs1_in;
+    wire [1:0] fwd_rs2_in;
+
+    ForwardUnit ufwd(
+        .ex_rd_out(mem_rd_in),
+        .ex_reg_wr_out(mem_reg_wr_in),
+        .mem_rd_out(wb_rd_in),
+        .mem_reg_wr_out(wb_reg_wr_in),
+        .id_rs1_out(ex_rs1_in),
+        .id_rs2_out(ex_rs2_in),
+        .fwd_rs1_out(fwd_rs1_in),
+        .fwd_rs2_out(fwd_rs2_in)
     );
 
     ExecuteUnit uexec(
@@ -148,6 +174,10 @@ module cpu(
         .ex_imm_in(ex_imm_in),
         .ex_rd_in(ex_rd_in),
         .ex_pc_in(ex_pc_in),
+        .fwd_rs1_in(fwd_rs1_in),
+        .fwd_rs2_in(fwd_rs2_in),
+        .ex_fwd_alu_out_in(mem_alu_out_in),
+        .mem_fwd_alu_out_in(wb_alu_out_in),
         .ex_alu_out_out(ex_alu_out_out),
         .ex_alu_zero_out(ex_alu_zero_out),
         .ex_rv2_out(ex_rv2_out),

@@ -9,14 +9,8 @@
 03c02183 // lw x3, 60(x0)
 04802203 // lw x4, 72(x0)
 abc00293 // addi x5, x0, abc
-00000013 // addi  x0, x0, 0        ; NOP (does not modify regfile)
-00000013 // addi  x0, x0, 0        ; NOP (does not modify regfile)
 00c29293 // slli x5, x5, 12
-00000013 // addi  x0, x0, 0        ; NOP (does not modify regfile)
-00000013 // addi  x0, x0, 0        ; NOP (does not modify regfile)
 def2e293 // ori x5, x5, 0xDEF
-00000013 // addi  x0, x0, 0        ; NOP (does not modify regfile)
-00000013 // addi  x0, x0, 0        ; NOP (does not modify regfile)
 06501223 // sh x5, 100(x0)
 06500423 // sb x5, 104(x0)
 06502623 // sw x5, 108(x0)

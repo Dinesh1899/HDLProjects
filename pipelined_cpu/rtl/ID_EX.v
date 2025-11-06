@@ -17,6 +17,9 @@ module DecodeExecuteIntf(
     input [31:0] id_imm_out,
     input [4:0] id_rd_out,
 
+    input [4:0] id_rs1_out,
+    input [4:0] id_rs2_out, 
+
     output reg [1:0] ex_alu_src_in,
     output reg [3:0] ex_alu_op_in,
     output reg [1:0] ex_branch_in,
@@ -30,7 +33,9 @@ module DecodeExecuteIntf(
     output reg [31:0] ex_rv2_in,
     output reg [31:0] ex_imm_in,
     output reg [4:0] ex_rd_in,
-    output reg [31:0] ex_pc_in
+    output reg [31:0] ex_pc_in,
+    output reg [4:0] ex_rs1_in,
+    output reg [4:0] ex_rs2_in    
 );
 
     always @(posedge clk) begin
@@ -47,7 +52,9 @@ module DecodeExecuteIntf(
             ex_imm_in <= 0;
             ex_rd_in <= 0;
             ex_pc_in <= 0;
-            ex_func3_in <= 0;            
+            ex_func3_in <= 0;
+            ex_rs1_in <= 0;
+            ex_rs2_in <= 0;
         end
         else begin 
             ex_alu_src_in <= id_alu_src_out;
@@ -62,7 +69,9 @@ module DecodeExecuteIntf(
             ex_imm_in <= id_imm_out;
             ex_rd_in <= id_rd_out;
             ex_pc_in <= id_pc_out;
-            ex_func3_in <= id_func3_out; 
+            ex_func3_in <= id_func3_out;
+            ex_rs1_in <= id_rs1_out;
+            ex_rs2_in <= id_rs2_out;
         end
     end
 

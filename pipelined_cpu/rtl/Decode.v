@@ -23,6 +23,8 @@ module Decode(
     output [31:0] id_imm_out,
     output [4:0] id_rd_out,
     output [31:0] id_pc_out,
+    output [4:0] id_rs1_out,
+    output [4:0] id_rs2_out, 
     output [31:0] id_x31_out
 
 );
@@ -44,6 +46,9 @@ module Decode(
     assign {rs1, rs2, rd} = {id_idata_in[19:15], id_idata_in[24:20], id_idata_in[11:7]};
     assign id_func3_out = id_idata_in[14:12];
     assign id_rd_out = rd;
+
+    assign id_rs1_out = rs1;
+    assign id_rs2_out = rs2;
 
     regfile ureg(
         .clk(clk),
