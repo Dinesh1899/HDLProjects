@@ -51,7 +51,7 @@ module cpu_tb ();
         exp_reg_out_file = $fopen({`TESTDIR,"/exp_reg_out.mem"}, "r");
         exp_data_out_file = $fopen({`TESTDIR,"/exp_data_out.mem"}, "r");
         @(posedge clk);
-        for (i=0; i<40; i=i+1) begin
+        for (i=0; i<80; i=i+1) begin
             @(posedge clk);
         end
         

@@ -2,3 +2,4 @@
 ./test/itype
 ./test/stype
 ./test/sbtype
+./test/programs

@@ -270,6 +270,7 @@ module cpu(
         .ex_rd_in(ex_rd_in),
         .id_rs1_out(id_rs1_out),
         .id_rs2_out(id_rs2_out),
+        .id_alu_src_out(id_alu_src_out),
         .is_stall(is_stall),
         .pc_branch(pc_branch)
     );

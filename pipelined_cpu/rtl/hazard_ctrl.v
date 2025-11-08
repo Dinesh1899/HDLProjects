@@ -8,6 +8,7 @@ module HazardDetector(
     input [4:0] ex_rd_in,
     input [4:0] id_rs1_out,
     input [4:0] id_rs2_out,
+    input [1:0] id_alu_src_out,
     output [1:0] is_stall,
     output [31:0] pc_branch
 );
@@ -20,7 +21,7 @@ module HazardDetector(
     assign pc_branch = pc_next;
 
     assign is_branch_stall = (cb_taken & branch[0]) | branch[1];
-    assign is_load_stall = (ex_mem_reg_in) & ((id_rs1_out == ex_rd_in) | (id_rs2_out == ex_rd_in));
+    assign is_load_stall = (ex_mem_reg_in) & (((id_rs1_out == ex_rd_in) & ~id_alu_src_out[0]) | (((id_rs2_out == ex_rd_in) & ~id_alu_src_out[1])));
 
     assign is_stall = {is_branch_stall, is_load_stall};
 
