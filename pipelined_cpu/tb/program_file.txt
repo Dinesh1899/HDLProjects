@@ -5,7 +5,7 @@
 ../rtl/dmem.v
 ../rtl/imem.v
 ../rtl/memregintf.v
-../rtl/branch_ctrl.v
+../rtl/hazard_ctrl.v
 ../rtl/PC.v
 ../rtl/IF_ID.v
 ../rtl/controlunit.v

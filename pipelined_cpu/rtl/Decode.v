@@ -8,6 +8,7 @@ module Decode(
     input id_reg_wr_in,
     input [4:0] id_rd_in,
     input [31:0] id_reg_data_in,
+    input [1:0] id_is_stall,
 
     output [1:0] id_alu_src_out,
     output [3:0] id_alu_op_out,
@@ -29,14 +30,18 @@ module Decode(
 
 );
 
+    wire [3:0] dwe_out;
+    wire reg_wr_out;
+    wire [1:0] branch_out;
+
     ControlUnit cu(
         .instr(id_idata_in),
         .aluSrc(id_alu_src_out),
         .aluOp(id_alu_op_out),
-        .branch(id_branch_out),
-        .dwe(id_dwe_out),
+        .branch(branch_out),
+        .dwe(dwe_out),
         .memReg(id_mem_reg_out),
-        .regWr(id_reg_wr_out),
+        .regWr(reg_wr_out),
         .reginsel(id_reg_in_sel_out),
         .immVal(id_imm_out)
     );
@@ -49,6 +54,12 @@ module Decode(
 
     assign id_rs1_out = rs1;
     assign id_rs2_out = rs2;
+
+    assign id_dwe_out = |id_is_stall ? 4'd0 : dwe_out;
+    assign id_reg_wr_out = |id_is_stall ? 4'd0 : reg_wr_out;
+    assign id_branch_out = |id_is_stall ? 4'd0 : branch_out;
+    assign id_pc_out = id_pc_in;
+
 
     regfile ureg(
         .clk(clk),

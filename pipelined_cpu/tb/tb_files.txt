@@ -1,3 +1,4 @@
 ./test/rtype
 ./test/itype
 ./test/stype
+./test/sbtype

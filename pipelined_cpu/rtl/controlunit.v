@@ -18,7 +18,7 @@ module ControlUnit(
     // 1 --> PC; AUIPC
     assign aluSrc[0] = (opcode == `AUIPC);
     // 1 --> Immval 0 --> for rtype
-    assign aluSrc[1] = (opcode == `ITYPE | opcode == `LOAD | opcode == `STORE | opcode == `AUIPC);
+    assign aluSrc[1] = (opcode == `ITYPE | opcode == `LOAD | opcode == `STORE | opcode == `JALR | opcode == `AUIPC);
 
     assign memReg = (opcode == `LOAD); // LOAD Instruction
     

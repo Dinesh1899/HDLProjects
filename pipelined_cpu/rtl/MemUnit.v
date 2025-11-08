@@ -4,6 +4,7 @@ module CPUMemIntf(
     input [31:0] mem_data_in,
     input [31:0] mem_rv2_in,
     input [31:0] mem_pc_imm_in,
+    input [31:0] mem_pc4_in,
     input [31:0] mem_imm_in,
 
     input [4:0] mem_rd_in,
@@ -15,7 +16,8 @@ module CPUMemIntf(
     
     output [31:0] mem_alu_out_out,
     output [31:0] mem_data_out,
-    output [31:0] mem_pc_imm_out,
+    // output [31:0] mem_pc_imm_out,
+    output [31:0] mem_pc4_out,
     output [31:0] mem_imm_out,
     output [3:0] mem_dwe_out,
     output [31:0] mem_daddr_out,
@@ -38,7 +40,8 @@ module CPUMemIntf(
     );
 
     assign mem_alu_out_out = mem_alu_out_in;
-    assign mem_pc_imm_out = mem_pc_imm_in;
+    // assign mem_pc_imm_out = mem_pc_imm_in;
+    assign mem_pc4_out = mem_pc4_in;
     assign mem_imm_out = mem_imm_in;
     assign mem_rd_out = mem_rd_in;
     assign mem_reg_in_sel_out = mem_reg_in_sel_in;

@@ -18,14 +18,17 @@ module ExecuteUnit(
     input [1:0] fwd_rs2_in,
     input [31:0] ex_fwd_alu_out_in,
     input [31:0] mem_fwd_alu_out_in,
+    input [1:0] ex_is_stall,
 
     output [31:0] ex_alu_out_out,
     output [31:0] ex_rv2_out,
     output ex_alu_zero_out,
     output [31:0] ex_pc_imm_out,
+    output [31:0] ex_pc4_out,
     output [31:0] ex_imm_out,
 
     output [4:0] ex_rd_out,
+    output [1:0] ex_branch_out,
     output [1:0] ex_reg_in_sel_out,
     output [3:0] ex_dwe_out,
     output [2:0] ex_func3_out,
@@ -36,12 +39,14 @@ module ExecuteUnit(
 
     assign ex_rd_out = ex_rd_in;
     assign ex_reg_in_sel_out = ex_reg_in_sel_in;
-    assign ex_dwe_out = ex_dwe_in;
+    assign ex_dwe_out = ex_is_stall == 2'b10 ? 4'd0 : ex_dwe_in;
     assign ex_mem_reg_out = ex_mem_reg_in;
-    assign ex_reg_wr_out = ex_reg_wr_in;
+    assign ex_reg_wr_out = ex_is_stall == 2'b10 ? 4'd0 : ex_reg_wr_in;
     assign ex_imm_out = ex_imm_in;
     assign ex_pc_imm_out = ex_pc_in + ex_imm_in;
+    assign ex_pc4_out = ex_pc_in + 4;
     assign ex_func3_out = ex_func3_in;
+    assign ex_branch_out = ex_is_stall == 2'b10 ? 4'd0 : ex_branch_in;
 
     wire [31:0] alu_in1, alu_in2;
     wire [31:0] src_rv1, src_rv2;

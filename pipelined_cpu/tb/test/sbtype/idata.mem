@@ -22,6 +22,12 @@
 00d6c6b3 // xor x13, x13, x13
 ffff8717 // auipc x14, -8
 2dead7b7 // lui x15 0x2dead
+00000013 // addi  x0, x0, 0
+00000013 // addi  x0, x0, 0
+06f02223 // sw x15 100(x0)
+00000013 // addi  x0, x0, 0
+06402803 // lw x16 100(x0)
+abc86893 // ori x17 x16 0xabc
 // 02208463 // beq  x1, x2, 60
 // 02209e63 // bne  x1, x2, 60
 // 0241ce63 // blt x3, x4, 60

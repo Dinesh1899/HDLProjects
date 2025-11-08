@@ -1,7 +1,7 @@
 module WBUnit(
     input [31:0] wb_alu_out_in,
     input [31:0] wb_mem_data_in,
-    input [31:0] wb_pc_imm_in,
+    input [31:0] wb_pc4_in,
     input [31:0] wb_imm_in,
     input [4:0] wb_rd_in,
     input [1:0] wb_reg_in_sel_in,
@@ -14,7 +14,7 @@ module WBUnit(
 
     wire [31:0] reg_data;
 
-    assign reg_data = wb_reg_in_sel_in[1] ? (wb_reg_in_sel_in[0] ? wb_pc_imm_in : wb_imm_in) : wb_alu_out_in;
+    assign reg_data = wb_reg_in_sel_in[1] ? (wb_reg_in_sel_in[0] ? wb_pc4_in : wb_imm_in) : wb_alu_out_in;
 
     assign wb_reg_wr_data_out = wb_mem_reg_in ? wb_mem_data_in : reg_data;
 
