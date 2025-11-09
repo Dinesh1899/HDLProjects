@@ -64,49 +64,34 @@ Test vectors and expected outputs:
 From a specific CPU folder (example: single-cycle):
 
 1. Build and run (simple):
-   - Open terminal:
-     cd singlecycle_cpu/tb
-     ./run.sh
-   - run.sh already appends build/run output into `tb/logs/cpu_tb_run.log`.
+  - Open terminal and run:
 
-2. Run and capture both stdout/stderr (example from repository root):
-   - cd singlecycle_cpu/tb
-   - ./run.sh >> logs/cpu_tb_run.log 2>&1
-   Note: run.sh itself redirects to logs/cpu_tb_run.log, so this will duplicate redirection if desired.
+  ```bash
+    cd singlecycle_cpu/tb
+    ./run.sh
+  ```
+  - run.sh already appends build/run output into `tb/logs/cpu_tb_run.log`.
 
-3. Build only:
-   - cd singlecycle_cpu/tb
-   - ./build.sh
-   - This runs iverilog to create the simulator executable (vvp target).
-
-4. Run the compiled testbench manually:
-   - cd singlecycle_cpu/tb/build
-   - vvp cpu_tb
-
-5. Inspect waveform:
-   - Open `tb/build/cpu_tb.vcd` with GTKWave:
-     gtkwave tb/build/cpu_tb.vcd
-
+2. Inspect waveform:
+  - Open `tb/build/cpu_tb.vcd` with GTKWave:
+  ```bash
+    cd pipelined_cpu/tb
+    gtkwave build/cpu_tb.vcd &
+  ```
 ---
 
 ## Selecting tests / programs
 
 - The run scripts iterate test directories listed in `tb/tb_files.txt`. Edit that file to change which test sets are executed.
-- For some setups `tb/program_file.txt` controls memory/program selection inside the testbench — edit it to point the testbench to a particular imem file.
 
 ---
 
 ## Logs and debugging
 
 - Runtime output and errors are appended to `tb/logs/cpu_tb_run.log`.
-- If output appears missing, check:
-  - `tb/logs/cpu_tb_run.log` for accumulated output.
-  - `tb/build/cpu_tb.vcd` for waveform data.
-  - That test files use Unix line endings (use `dos2unix tb/test/...` if needed).
-- To prepend a timestamp or separators to the log before each run, either:
-  - Edit `tb/run.sh` to echo separators and `date` before calling `build.sh`, or
-  - Run externally:
-    (echo '---'; echo '---'; echo '---'; date; ./run.sh) >> logs/cpu_tb_run.log 2>&1
+- If there are any errors:
+  - Check `tb/logs/cpu_tb_run.log` for accumulated output.
+  - Inspect `tb/build/cpu_tb.vcd` for waveform data using GTKWave commands given above.
 
 ---
 
