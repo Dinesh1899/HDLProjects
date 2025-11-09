@@ -1,22 +1,22 @@
-`timescale 1ns / 1ps
+module FetchDecodeIntf(
+    input clk,
+    input reset,
+    input [1:0] is_stall,
+    input [31:0] if_idata_in,
+    input [31:0] if_pc_in,
+    output reg [31:0] if_idata_out,
+    output reg [31:0] if_pc_out
+);
 
-module IF_ID(
-	 input clk,
-	 input staller,
-    input [31:0] PC_in,
-    input [31:0] idata_in,
-    output reg [31:0] PC_out,
-    output reg [31:0] idata_out
-    );
-	 initial begin
-PC_out = 0;
-idata_out = 0;
-end
+    always @(posedge clk or posedge reset) begin
+        if(reset) begin 
+            if_idata_out <= 0;
+            if_pc_out <= 0;
+        end
+        else if(is_stall != 2'b01) begin 
+            if_idata_out <= if_idata_in;
+            if_pc_out <= if_pc_in;            
+        end
+    end
 
-always @(posedge clk) begin
-if(~staller)begin
-PC_out <= PC_in;
-idata_out <= idata_in;
-end
-end
 endmodule

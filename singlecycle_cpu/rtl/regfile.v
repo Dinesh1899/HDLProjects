@@ -16,12 +16,6 @@ integer i;
 
 integer j;
 
-// initial begin
-//   for(j = 0; j < 32; j = j+1) 
-//     RF[j] = {32{1'b0}};
-// end
-
-
 initial begin $readmemh({`TESTDIR, "/init_regfile.mem"}, RF); end
 
 assign rv1 = (rs1 !=0) ? RF[rs1] : 0;

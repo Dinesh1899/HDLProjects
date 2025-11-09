@@ -1,17 +1,30 @@
-`timescale 1ns / 1ps
+`include "../rtl/parameters.vh"
 
 module immgen(
-    input [2:0] imm,
-    input [31:0] idata,
-    output [31:0] immgen
-    );
-	
-	assign immgen = (imm == 3'b000) ? {{20{idata[31]}},idata[31:20]}: //LW JALR ALUI
-						 (imm == 3'b001) ? {{20{idata[31]}},idata[31:25],idata[11:7]}: //SW
-						 (imm == 3'b010) ? {idata[31:12],{12{1'b0}}}: //LUI AUIPC
-						 (imm == 3'b011) ? {{12{idata[31]}}, idata[19:12], idata[20], idata[30:21], 1'b0}: //JAL
-						 (imm == 3'b100) ? {{20{idata[31]}},idata[7],idata[30:25],idata[11:8],1'b0}: //BEQ
-						 (imm == 3'b101) ? {{20{1'b0}},idata[31:20]} : {{20{idata[31]}},idata[31:20]}; //LU
-						 
+    input  [31:0] instr,
+    output reg [31:0] immVal
+);
+
+    // assign immVal = {20'h00000,instr[31:20]};
+    wire [6:0] opcode;
+    
+    assign opcode = instr[6:0];
+
+    always @(*) begin 
+        case (opcode)
+            `ITYPE: immVal = {{20{instr[31]}}, instr[31:20]}; // I type Instructions
+            `STORE: immVal = {{20{instr[31]}}, instr[31:25], instr[11:7]}; // Store Instructions
+            `LOAD: immVal = {{20{instr[31]}}, instr[31:20]};  // Load Instructions
+            `SBTYPE: immVal = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0}; 
+                        // Branch Instructions
+            `JAL : immVal = {{12{instr[31]}}, instr[19:12], instr[20], instr[30:21] ,1'b0};
+                        // imm[20|10:1|11|19:12]; // JAL
+            `JALR : immVal = {{20{instr[31]}}, instr[31:20]};
+                        // imm[11:0]; // JALR
+            `AUIPC : immVal = {instr[31:12], 12'h000}; // AUIPC
+            `LUI : immVal = {instr[31:12], 12'h000}; // LUI    
+            default: immVal = 32'h00000000;
+        endcase
+    end
 
 endmodule

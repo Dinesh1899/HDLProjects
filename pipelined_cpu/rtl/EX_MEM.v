@@ -1,52 +1,69 @@
-`timescale 1ns / 1ps
+module ExecuteMemIntf(
+    input clk,
+    input reset,
+    input [31:0] ex_alu_out_out,
+    input [31:0] ex_rv2_out,
+    input ex_alu_zero_out,
+    input [31:0] ex_pc_imm_out,
+    input [31:0] ex_pc4_out,
+    input [1:0] ex_branch_out,
+    input [31:0] ex_imm_out,
 
-module EX_MEM(
-	 input clk,
-    input memtoreg_in,
-    input regwrite_in,
-    input [3:0] memwrite_in,
-    //input [31:0] PC_branch_in,
-    input [31:0] ALUout_in,
-    input [31:0] rv2_in,
-    output reg [31:0] rv2_out,
-    output reg [31:0] ALUout_out,
-    //output reg[31:0] PC_branch_out,
-    output reg [3:0] memwrite_out,
-    output reg regwrite_out,
-    output reg memtoreg_out,
-    input [31:0] immgen_in,
-    output reg [31:0] immgen_out,
-    input [1:0] regin_in,
-    output reg [1:0] regin_out,
-    input [31:0] PC_plus4_in,
-    output reg [31:0] PC_plus4_out,
-	 input [31:0] idata_in,
-	 output reg [31:0] idata_out
-    );
-	 
-	 initial begin
-	regin_out = 0;
-	memtoreg_out = 0;
-	memwrite_out = 0;
-	PC_plus4_out = 0;
-	ALUout_out = 0;
-	rv2_out = 0;
-	immgen_out = 0;
-	regwrite_out = 0;
-	idata_out = 0;
-	end
+    input [4:0] ex_rd_out,
+    input [1:0] ex_reg_in_sel_out,
+    input [3:0] ex_dwe_out,
+    input [2:0] ex_func3_out,
+    input ex_mem_reg_out,
+    input ex_reg_wr_out,
 
-always @(posedge clk)begin
-	regin_out <= regin_in;
-	memtoreg_out <= memtoreg_in;
-	memwrite_out <= memwrite_in;
-	//PC_branch_out <= PC_branch_in;
-	PC_plus4_out <= PC_plus4_in;
-	ALUout_out <= ALUout_in;
-	rv2_out <= rv2_in;
-	immgen_out <= immgen_in;
-	regwrite_out <= regwrite_in;
-	idata_out <= idata_in;
-	
-	end
+    output reg [31:0] mem_alu_out_in,
+    output reg [31:0] mem_rv2_in,
+    output reg mem_alu_zero_in,
+    output reg [31:0] mem_pc_imm_in,
+    output reg [31:0] mem_pc4_in,
+    output reg [1:0] mem_branch_in,
+    output reg [31:0] mem_imm_in,
+
+    output reg [4:0] mem_rd_in,
+    output reg [1:0] mem_reg_in_sel_in,
+    output reg [3:0] mem_dwe_in,
+    output reg [2:0] mem_func3_in,
+    output reg mem_mem_reg_in,
+    output reg mem_reg_wr_in
+
+);
+
+    always @(posedge clk or posedge reset) begin
+        if(reset) begin 
+            mem_alu_out_in <= 0;
+            mem_alu_zero_in <= 0;
+            mem_pc_imm_in <= 0;
+            mem_pc4_in <= 0;
+            mem_imm_in <= 0;
+            mem_rd_in <= 0;
+            mem_reg_in_sel_in <= 0;
+            mem_dwe_in <= 0;
+            mem_func3_in <= 0;
+            mem_mem_reg_in <= 0;
+            mem_reg_wr_in <= 0;
+            mem_rv2_in <= 0;
+            mem_branch_in <= 0;
+        end
+        else begin 
+            mem_alu_out_in <= ex_alu_out_out;
+            mem_alu_zero_in <= ex_alu_zero_out;
+            mem_pc_imm_in <= ex_pc_imm_out;
+            mem_pc4_in <= ex_pc4_out;
+            mem_imm_in <= ex_imm_out;
+            mem_rd_in <= ex_rd_out;
+            mem_reg_in_sel_in <= ex_reg_in_sel_out;
+            mem_dwe_in <= ex_dwe_out;
+            mem_func3_in <= ex_func3_out;
+            mem_mem_reg_in <= ex_mem_reg_out;
+            mem_reg_wr_in <= ex_reg_wr_out;
+            mem_rv2_in <= ex_rv2_out;
+            mem_branch_in <= ex_branch_out;        
+        end
+    end
+
 endmodule

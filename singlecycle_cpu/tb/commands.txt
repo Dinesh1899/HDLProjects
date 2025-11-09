@@ -1,3 +1,0 @@
-iverilog -DTESTDIR=\"./test/rtype\" -o cpu_tb -c program_file.txt
-
-vvp cpu_tb
