@@ -1,0 +1,39 @@
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00a00093 // addi x1, x0, 10
+00102023 // sw x1, 0(x0)
+00002083 // lw x1, 0(x0)
+00100113 // addi x2, x0, 1
+fff08093 // addi x1, x1, -1
+00110113 // addi x2, x2, 1
+fe101ce3 // bne x0, x1, -8
+00202223 // sw x2, 4(x0)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013 // addi x0, x0, 0        ; NOP (does not modify regfile)
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
