@@ -12,9 +12,9 @@ module immgen(
 
     always @(*) begin 
         case (opcode)
-            `ITYPE: immVal = {20'h00000, instr[31:20]}; // I type Instructions
-            `STORE: immVal = {20'h00000, instr[31:25], instr[11:7]}; // Store Instructions
-            `LOAD: immVal = {20'h00000, instr[31:20]};  // Load Instructions
+            `ITYPE: immVal = {{20{instr[31]}}, instr[31:20]}; // I type Instructions
+            `STORE: immVal = {{20{instr[31]}}, instr[31:25], instr[11:7]}; // Store Instructions
+            `LOAD: immVal = {{20{instr[31]}}, instr[31:20]};  // Load Instructions
             `SBTYPE: immVal = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0}; 
                         // Branch Instructions
             `JAL : immVal = {{12{instr[31]}}, instr[19:12], instr[20], instr[30:21] ,1'b0};
