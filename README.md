@@ -1,118 +1,120 @@
-# RISC-V CPU HDL Project
+# RISC-V CPU
 
-This repository implements both **single-cycle** and **pipelined** RISC-V RV32I CPUs in Verilog, including memory modules, control logic, and comprehensive testbenches. The project is organized for simulation and synthesis, with modular design and memory initialization files for various instruction sets.
+This repository contains two RISC-V RV32I CPU implementations in Verilog:
+- single-cycle CPU (simple, every instruction in one cycle)
+- pipelined CPU (5-stage pipeline with hazard control and forwarding)
 
----
-
-## Directory Structure
-
-```
-rtl/
-  singlecycle_cpu/      # Single-cycle CPU implementation
-  pipelined_cpu/        # Pipelined CPU implementation
-tb/
-  singlecycle_cpu/      # Testbenches for single-cycle CPU
-  pipelined_cpu/        # Testbenches for pipelined CPU
-  alu/                  # ALU testbenches and parameters
-  memory/               # Memory and regfile testbenches
-```
+Both variants include RTL sources, testbenches, build/run scripts, and example test programs.
 
 ---
 
-## Single-Cycle CPU ([rtl/singlecycle_cpu](rtl/singlecycle_cpu))
+## Top-level layout
 
-Implements a classic single-cycle RISC-V CPU. All instruction execution is completed in one clock cycle.
+- singlecycle_cpu/
+  - rtl/            — Verilog RTL for the single-cycle CPU
+  - tb/             — testbench scripts, test vectors, logs and build artifacts
+  - tb/build/       — generated simulation artifacts (cpu_tb.vcd, etc.)
+  - tb/logs/        — runtime logs (cpu_tb_run.log)
+  - tb/test/        — grouped test programs (rtype, itype, stype, sbtype, ...)
+- pipelined_cpu/
+  - rtl/            — Verilog RTL for the pipelined CPU and pipeline registers
+  - tb/             — testbench scripts, test vectors, logs and build artifacts
+  - tb/build/
+  - tb/logs/
+  - tb/test/
 
-### Key Modules
-
-- [`CPU`](rtl/singlecycle_cpu/CPU.v): Top-level CPU logic, connects all submodules.
-- [`control`](rtl/singlecycle_cpu/control.v): Decodes instructions and generates control signals.
-- [`alu`](rtl/singlecycle_cpu/alu.v): Arithmetic and logic operations.
-- [`alucontrol`](rtl/singlecycle_cpu/alucontrol.v): Determines ALU operation based on instruction.
-- [`regfile`](rtl/singlecycle_cpu/regfile.v): 32 general-purpose registers.
-- [`immgen`](rtl/singlecycle_cpu/immgen.v): Immediate value extraction.
-- [`dmem`](rtl/singlecycle_cpu/dmem.v): Data memory (byte-addressable, 128 bytes).
-- [`imem`](rtl/singlecycle_cpu/imem.v): Instruction memory (32 words).
-- [`PC`](rtl/singlecycle_cpu/PC.v): Program counter logic.
-
-### Memory Initialization
-
-- Instruction memory: `imem1_ini.mem`, `imem2_ini.mem`, ... (see commented versions for instruction mapping).
-- Data memory: `dmem_ini.mem`.
-
----
-
-## Pipelined CPU ([rtl/pipelined_cpu](rtl/pipelined_cpu))
-
-Implements a 5-stage pipeline (IF, ID, EX, MEM, WB) for improved throughput and performance.
-
-### Key Modules
-
-- [`CPU`](rtl/pipelined_cpu/CPU.v): Top-level pipelined CPU logic.
-- Pipeline registers: [`IF_ID`](rtl/pipelined_cpu/IF_ID.v), [`ID_EX`](rtl/pipelined_cpu/ID_EX.v), [`EX_MEM`](rtl/pipelined_cpu/EX_MEM.v), [`MEM_WB`](rtl/pipelined_cpu/MEM_WB.v).
-- [`control`](rtl/pipelined_cpu/control.v): Instruction decoding.
-- [`alu`](rtl/pipelined_cpu/alu.v), [`alucontrol`](rtl/pipelined_cpu/alucontrol.v): ALU and control.
-- [`regfile`](rtl/pipelined_cpu/regfile.v): Register file with forwarding logic.
-- [`immgen`](rtl/pipelined_cpu/immgen.v): Immediate extraction.
-- [`dmem`](rtl/pipelined_cpu/dmem.v), [`imem`](rtl/pipelined_cpu/imem.v): Data and instruction memory.
-- [`PC`](rtl/pipelined_cpu/PC.v): Program counter and branch logic.
-- Hazard detection: [`staller`](rtl/pipelined_cpu/staller.v), [`forwarding_unit`](rtl/pipelined_cpu/forwarding_unit.v).
-
-### Memory Initialization
-
-- Instruction memory: `imem1_ini.mem`, `imem2_ini.mem`, ... (see commented versions for instruction mapping).
-- Data memory: `dmem_ini.mem`.
+Each tb/ directory contains:
+- build.sh        — compiles the testbench (uses iverilog)
+- run.sh          — invokes build.sh and appends output to tb/logs/cpu_tb_run.log
+- tb_files.txt    — list of test directories used by run scripts
+- program_file.txt— (where present) alternative listing of programs to run
+- test/*          — input .mem files and expected output files for each test
 
 ---
 
-## Testbenches ([tb](tb))
+## Key files (per variant)
 
-Testbenches are provided for both CPU implementations and individual modules.
+Example files found in both variants:
+- rtl/CPU.v            — top-level CPU module
+- rtl/imem.v, rtl/dmem.v, rtl/regfile.v, rtl/alu.v, etc.
+- tb/cpu_tb.v          — top-level Verilog testbench used for simulation
+- tb/build.sh          — builds cpu_tb using iverilog
+- tb/run.sh            — runs build.sh and appends logs to tb/logs/cpu_tb_run.log
 
-- [`tb/singlecycle_cpu/cpu_tb.v`](tb/singlecycle_cpu/cpu_tb.v): Single-cycle CPU testbench.
-- [`tb/pipelined_cpu/cpu_tb.v`](tb/pipelined_cpu/cpu_tb.v): Pipelined CPU testbench.
-- [`tb/alu/alu_tb.v`](tb/alu/alu_tb.v): ALU testbench.
-- [`tb/memory/dmem_tb.v`](tb/memory/dmem_tb.v): Data memory testbench.
-- [`tb/memory/imem_tb.v`](tb/memory/imem_tb.v): Instruction memory testbench.
-- [`tb/memory/regfile_tb.v`](tb/memory/regfile_tb.v): Register file testbench.
+Generated outputs:
+- tb/logs/cpu_tb_run.log — runtime log (appended by tb/run.sh)
+- tb/build/cpu_tb.vcd    — waveform dump (if testbench writes VCD)
 
-Testbenches instantiate the CPU, connect memory modules, and provide clock/reset stimulus.
-
----
-
-## Instruction Set Reference
-
-![alt text](img/RV32I_ISA.PNG)
+Test vectors and expected outputs:
+- tb/test/<testname>/*.mem
+  - idata.mem, data0..data3.mem, init_regfile.mem, exp_reg_out.mem, exp_data_out.mem
 
 ---
 
-## How to Simulate
+## Requirements
 
-1. **Select the CPU variant**:
-   - For single-cycle: Use [`rtl/singlecycle_cpu/cpu_tb.v`](rtl/singlecycle_cpu/cpu_tb.v) or [`tb/singlecycle_cpu/cpu_tb.v`](tb/singlecycle_cpu/cpu_tb.v).
-   - For pipelined: Use [`rtl/pipelined_cpu/cpu_tb.v`](rtl/pipelined_cpu/cpu_tb.v) or [`tb/pipelined_cpu/cpu_tb.v`](tb/pipelined_cpu/cpu_tb.v).
-
-2. **Choose instruction memory file**:
-   - Edit the `$readmemh` filename in [`imem.v`](rtl/singlecycle_cpu/imem.v) or [`imem.v`](rtl/pipelined_cpu/imem.v) to select the desired program.
-
-3. **Run simulation**:
-   - Use your preferred Verilog simulator (e.g., ModelSim, Vivado, Icarus Verilog).
-   - Example (Icarus Verilog):
-     ```sh
-     iverilog -o cpu_tb rtl/singlecycle_cpu/*.v tb/singlecycle_cpu/cpu_tb.v
-     vvp cpu_tb
-     ```
-
-4. **View results**:
-   - Observe register values, memory contents, and output signals to verify correct execution.
+- Linux (development targeted on Linux)
+- iverilog + vvp (for simulation)
+  - Install: sudo apt-get update && sudo apt-get install -y iverilog
 
 ---
 
-## Customization
+## How to run simulations
 
-- **Instruction Programs**: Add or modify `.mem` files for different test programs.
-- **Data Memory**: Edit `dmem_ini.mem` for initial data values.
-- **Parameters**: Adjust memory sizes or pipeline depth as needed.
+From a specific CPU folder (example: single-cycle):
+
+1. Build and run (simple):
+   - Open terminal:
+     cd singlecycle_cpu/tb
+     ./run.sh
+   - run.sh already appends build/run output into `tb/logs/cpu_tb_run.log`.
+
+2. Run and capture both stdout/stderr (example from repository root):
+   - cd singlecycle_cpu/tb
+   - ./run.sh >> logs/cpu_tb_run.log 2>&1
+   Note: run.sh itself redirects to logs/cpu_tb_run.log, so this will duplicate redirection if desired.
+
+3. Build only:
+   - cd singlecycle_cpu/tb
+   - ./build.sh
+   - This runs iverilog to create the simulator executable (vvp target).
+
+4. Run the compiled testbench manually:
+   - cd singlecycle_cpu/tb/build
+   - vvp cpu_tb
+
+5. Inspect waveform:
+   - Open `tb/build/cpu_tb.vcd` with GTKWave:
+     gtkwave tb/build/cpu_tb.vcd
+
+---
+
+## Selecting tests / programs
+
+- The run scripts iterate test directories listed in `tb/tb_files.txt`. Edit that file to change which test sets are executed.
+- For some setups `tb/program_file.txt` controls memory/program selection inside the testbench — edit it to point the testbench to a particular imem file.
+
+---
+
+## Logs and debugging
+
+- Runtime output and errors are appended to `tb/logs/cpu_tb_run.log`.
+- If output appears missing, check:
+  - `tb/logs/cpu_tb_run.log` for accumulated output.
+  - `tb/build/cpu_tb.vcd` for waveform data.
+  - That test files use Unix line endings (use `dos2unix tb/test/...` if needed).
+- To prepend a timestamp or separators to the log before each run, either:
+  - Edit `tb/run.sh` to echo separators and `date` before calling `build.sh`, or
+  - Run externally:
+    (echo '---'; echo '---'; echo '---'; date; ./run.sh) >> logs/cpu_tb_run.log 2>&1
+
+---
+
+## Extending / Custom tests
+
+- Add new test directories under `tb/test/` with the same .mem file naming convention.
+- Update `tb/tb_files.txt` to include the new test directory.
+- Adjust `$readmemh` in `rtl/imem.v` if you want the testbench to use alternate instruction memory files.
 
 ---
 
